@@ -30,7 +30,7 @@ const rail=$('rail'), reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const basket=[];
 let category='featured', editing=-1;
 const labels={fruit:'Frutas',cream:'Cremas',topping:'Toppings',sauce:'Jaleas'};
-const choices={fruit:data.fruits,cream:data.creams,topping:data.toppings,sauce:['Fudge','Manjar']};
+const choices={fruit:data.fruits,cream:data.creams,topping:data.toppings,sauce:['Fudge','Manjar','Leche condensada','Fresa','Maracuyá']};
 const rules={
  'waffle-clasico':[1,0,1,1],'waffle-sweet':[1,1,2,1],'waffle-large':[2,2,3,2],
  'minidonas-clasicas-6-unidades':[1,0,1,2],'minidonas-sweet-10-unidades':[1,1,2,2],'minidonas-large-12-unidades':[2,1,3,2],
