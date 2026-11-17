@@ -173,22 +173,24 @@ const headings=new IntersectionObserver(entries=>{
 document.querySelectorAll('main h2').forEach(title=>headings.observe(title));
 const stats=document.querySelector('.shop-stats');
 const counters=stats.querySelectorAll('[data-count]');
+let countFrame=0,statsVisible=false;
 const countObserver=new IntersectionObserver(entries=>{
-  if(!entries.some(entry=>entry.isIntersecting))return;
-  countObserver.disconnect();
-  if(reduced.matches)return;
-  const start=performance.now();
-  function tick(now){
-    const progress=reduced.matches?1:Math.min(1,(now-start)/950);
-    const ease=1-(1-progress)**3;
-    for(const counter of counters){
-      const value=1+Math.floor((Number(counter.dataset.count)-1)*ease);
-      counter.textContent=String(value).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
-    }
-    if(progress<1)requestAnimationFrame(tick);
+ const visible=entries.some(entry=>entry.isIntersecting);
+ if(!visible){statsVisible=false;cancelAnimationFrame(countFrame);return;}
+ if(statsVisible)return;
+ statsVisible=true;
+ const start=performance.now();
+ function tick(now){
+  const progress=reduced.matches?1:Math.min(1,(now-start)/1600);
+  const ease=1-(1-progress)**2;
+  for(const counter of counters){
+   const value=1+Math.floor((Number(counter.dataset.count)-1)*ease);
+   counter.textContent=String(value).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
   }
-  tick(start);
-},{threshold:.25});
+  if(progress<1)countFrame=requestAnimationFrame(tick);
+ }
+ tick(start);
+},{threshold:.55});
 countObserver.observe(stats);
 
 const quoteRail=document.querySelector('.quotes');
