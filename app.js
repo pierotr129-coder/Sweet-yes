@@ -4,7 +4,26 @@ const data=window.SWEET_YES, $=id=>document.getElementById(id);
 const find=id=>data.products.find(p=>p.id===id);
 const money=n=>`S/ ${n.toFixed(2)}`;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const photo=p=>`assets/carta-web/${p.id}.webp`;
+const realPhotos = {
+ 'fresas-con-crema-mediano':'vaso-catalogo',
+ 'fresas-con-crema-grande':'vaso-catalogo',
+ 'fresas-con-crema-maxi':'vaso-catalogo',
+ 'fresas-con-crema-1-litro':'vaso-catalogo',
+ 'sandwich-sweet':'sandwich-nuevo',
+ 'empanada-de-carne':'empanada-carne',
+ 'empanada-de-pollo':'empanada-pollo',
+ 'empanada-de-jamon-y-queso':'empanada-jamon',
+ 'frappe-oreo':'frappe-nuevo',
+ 'minidonas-clasicas-6-unidades': 'minidonas',
+ 'minidonas-sweet-10-unidades': 'minidonas',
+ 'minidonas-large-12-unidades': 'minidonas',
+ 'waffle-clasico': 'waffle-chispas',
+ 'waffle-sweet': 'waffle-oreo',
+ 'waffle-large': 'preparacion'
+};
+const photo = product => realPhotos[product.id]
+ ? `assets/fotos-reales/${realPhotos[product.id]}-900.webp`
+ : `assets/carta-web/${product.id}.webp`;
 const featured=['fresas-con-crema-grande','waffle-sweet','minidonas-clasicas-6-unidades','frappe-oreo','crepa-especial','sandwich-sweet'];
 const sizes=data.products.filter(p=>p.category==='fresas');
 const rail=$('rail'), reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -18,11 +37,12 @@ const rules={
  'crepa-clasica':[1,0,0,1],'crepa-sweet':[1,0,0,1],'crepa-especial':[2,0,0,0]
 };
 function limits(p){const counts=p.category==='fresas'?[2,2,sizes.indexOf(p)+1,0]:rules[p.id]||[0,0,0,0];return Object.fromEntries(Object.keys(labels).map((k,i)=>[k,counts[i]]));}
-function fresh(id){return {id,qty:1,fruit:[],cream:[],topping:[],sauce:[],notes:''};}
+function fresh(id){return {id,qty:1,fruit:[],cream:[],topping:[],sauce:[],omitted:[],notes:''};}
 function extras(item){return find(item.id).category==='fresas'?Math.max(0,item.topping.length-limits(find(item.id)).topping):0;}
 function price(item){const p=find(item.id);return p.price===null?null:(p.price+extras(item))*item.qty;}
 function describe(item){
  const lines=Object.keys(labels).filter(k=>item[k].length).map(k=>`${labels[k]}: ${item[k].join(', ')}`);
+ for(const key of item.omitted||[])if(limits(find(item.id))[key])lines.push(key==='topping'?'Sin toppings':'Sin jaleas');
  if(extras(item))lines.push(`Toppings extra por vaso: ${extras(item)} (+${money(extras(item))})`);
  if(item.notes.trim())lines.push(`Indicaciones: ${item.notes.trim()}`);
  return lines;
@@ -47,35 +67,48 @@ function slide(dir){rail.scrollBy({left:dir*(rail.firstElementChild.offsetWidth+
 $('prev').onclick=()=>slide(-1);$('next').onclick=()=>slide(1);rail.onscroll=updateRail;window.addEventListener('resize',updateRail);
 rail.onkeydown=e=>{if(['ArrowRight','ArrowLeft'].includes(e.key)){e.preventDefault();slide(e.key==='ArrowRight'?1:-1);}};
 function editor(host,item){
- const p=find(item.id),cup=p.category==='fresas', requirements=limits(p);
+ const p=find(item.id),cup=p.category==='fresas',requirements=limits(p);
+ item.omitted ||= [];
  const sizeRow=cup?`<fieldset><legend>Elige tu tamaño</legend>${sizes.map(s=>`<label class="choice"><input name="size" type="radio" value="${s.id}" ${item.id===s.id?'checked':''}>${esc(s.name.split(' · ')[1])}</label>`).join('')}</fieldset>`:'';
  const groups=Object.entries(requirements).filter(([,n])=>n).map(([key,n])=>{
-   const list=key==='sauce'&&p.id==='crepa-sweet'?[...choices.sauce,'Nutella']:choices[key];
-   return `<details data-key="${key}"><summary>${labels[key]} <small></small></summary>${list.map(v=>`<label class="choice"><input name="${key}" value="${esc(v)}" type="checkbox" ${item[key].includes(v)?'checked':''}>${esc(v)}</label>`).join('')}</details>`;
+  const list=key==='sauce'&&p.id==='crepa-sweet'?[...choices.sauce,'Nutella']:choices[key];
+  const optional=key==='topping'||key==='sauce';
+  const hint=optional?`Elige hasta ${n} o indica que no deseas.`:`Elige entre 1 y ${n}.`;
+  return `<details data-key="${key}"><summary>${labels[key]} <small></small></summary><p class="selection-hint">${hint}${cup&&key==='topping'?' Los adicionales cuestan S/ 1 por vaso.':''}</p>${list.map(v=>`<label class="choice"><input name="${key}" value="${esc(v)}" type="checkbox" ${item[key].includes(v)?'checked':''}>${esc(v)}</label>`).join('')}${optional?`<label class="choice choice-none"><input type="checkbox" name="omit-${key}" ${item.omitted.includes(key)?'checked':''}>Sin ${labels[key].toLowerCase()}</label>`:''}</details>`;
  }).join('');
- host.innerHTML=`<form>${sizeRow}<p>${cup?`Incluye 2 frutas, 2 cremas y ${requirements.topping} topping${requirements.topping>1?'s':''}.`:esc(p.description)}</p>${groups}${cup?'<small>Topping adicional + S/ 1.00</small>':''}<details><summary>Observaciones</summary><textarea name="notes" aria-label="Observaciones" maxlength="350" rows="2">${esc(item.notes)}</textarea></details><div class="quantity"><button type="button" data-step="-1" aria-label="Quitar una unidad">−</button><output></output><button type="button" data-step="1" aria-label="Añadir una unidad">+</button></div><p class="warning" role="status"></p><div class="edit-actions"><button class="pill" type="submit">${editing>=0&&host===$('detail-editor')?'Guardar cambios':'Agregar al pedido'}</button>${host===$('cup-editor')?'<button class="pill outline" type="submit" value="checkout">Pedir por WhatsApp</button>':''}</div></form>`;
+ host.innerHTML=`<form>${sizeRow}<p>${cup?`Incluye hasta 2 frutas, 2 cremas y ${requirements.topping} topping${requirements.topping>1?'s':''}. Puedes elegir menos; se mantiene el precio del tamaño.`:esc(p.description)}</p>${groups}<details><summary>Observaciones</summary><textarea name="notes" aria-label="Observaciones" maxlength="350" rows="2">${esc(item.notes)}</textarea></details><div class="quantity"><button type="button" data-step="-1" aria-label="Quitar una unidad">−</button><output aria-live="polite"></output><button type="button" data-step="1" aria-label="Añadir una unidad">+</button></div><p class="warning" role="alert"></p><div class="edit-actions"><button class="pill" type="submit">${editing>=0&&host===$('detail-editor')?'Guardar cambios':'Agregar al pedido'}</button>${host===$('cup-editor')?'<button class="pill outline" type="submit" value="checkout">Revisar y pedir por WhatsApp</button>':''}</div></form>`;
  const form=host.firstElementChild;
  function refresh(){
   for(const d of form.querySelectorAll('[data-key]')){
    const key=d.dataset.key,n=requirements[key],extra=cup&&key==='topping';
-   d.querySelector('small').textContent=` · ${item[key].length?item[key].join(', '):`Elige ${n}`}`;
-   for(const input of d.querySelectorAll('input')) input.disabled=!extra&&!input.checked&&item[key].length>=n;
+   d.querySelector('small').textContent=` · ${item.omitted.includes(key)?'Sin '+labels[key].toLowerCase():item[key].length?item[key].join(', '):'Pendiente'}`;
+   for(const input of d.querySelectorAll(`input[name="${key}"]`))input.disabled=!extra&&!input.checked&&item[key].length>=n;
   }
   form.querySelector('output').textContent=item.qty+' · '+(price(item)===null?'Consultar precio':money(price(item)));
   form.querySelector('[data-step="-1"]').disabled=item.qty===1;
+  form.querySelector('[data-step="1"]').disabled=item.qty>=99;
  }
- form.onclick=e=>{if(e.target.dataset.step){item.qty=Math.max(1,item.qty+Number(e.target.dataset.step));refresh();}};
+ form.onclick=e=>{if(e.target.dataset.step){item.qty=Math.min(99,Math.max(1,item.qty+Number(e.target.dataset.step)));refresh();}};
  form.onchange=e=>{
   const field=e.target.name;form.querySelector('.warning').textContent='';
   if(field==='size'){item.id=e.target.value;if(host===$('cup-editor'))$('cup-photo').src=photo(find(item.id));else $('detail-name').textContent=find(item.id).name;editor(host,item);return;}
-  if(field in labels)item[field]=Array.from(form.querySelectorAll(`input[name="${field}"]:checked`),i=>i.value);refresh();
+  if(field.startsWith('omit-')){
+   const key=field.slice(5);item.omitted=item.omitted.filter(k=>k!==key);
+   if(e.target.checked){item.omitted.push(key);item[key]=[];form.querySelectorAll(`input[name="${key}"]`).forEach(i=>i.checked=false);}
+  }else if(field in labels){
+   item[field]=Array.from(form.querySelectorAll(`input[name="${field}"]:checked`),i=>i.value);
+   if(item[field].length){item.omitted=item.omitted.filter(k=>k!==field);const omit=form.querySelector(`[name="omit-${field}"]`);if(omit)omit.checked=false;}
+  }
+  e.target.closest('[data-key]')?.classList.remove('selection-error');refresh();
  };
  form.oninput=e=>{if(e.target.name==='notes')item.notes=e.target.value;};
  form.onsubmit=e=>{
   e.preventDefault();
-  for(const [k,n] of Object.entries(requirements))if(item[k].length<n){
-   const group=form.querySelector(`[data-key="${k}"]`);group.open=true;group.querySelector('summary').focus();
-   form.querySelector('.warning').textContent=`Completa tu selección de ${labels[k].toLowerCase()} (${item[k].length} de ${n}).`;return;
+  const missing=Object.entries(requirements).filter(([k,n])=>n&&!item[k].length&&!item.omitted.includes(k));
+  if(missing.length){
+   for(const [k] of missing){const group=form.querySelector(`[data-key="${k}"]`);group.open=true;group.classList.add('selection-error');}
+   form.querySelector('.warning').textContent='Antes de agregar el producto: '+missing.map(([k])=>(k==='topping'||k==='sauce')?`elige ${labels[k].toLowerCase()} o marca «Sin ${labels[k].toLowerCase()}»`:`elige al menos una ${k==='fruit'?'fruta':'crema'}`).join('; ')+'.';
+   form.querySelector(`[data-key="${missing[0][0]}"] summary`).focus();return;
   }
   if(host===$('detail-editor')&&editing>=0)basket[editing]=structuredClone(item);else basket.push(structuredClone(item));
   if($('detail').open)$('detail').close();editing=-1;resetCup();review();
@@ -172,20 +205,6 @@ previousReview.onclick=()=>moveReview(-1);
 nextReview.onclick=()=>moveReview(1);
 quoteRail.addEventListener('scroll',updateReviewControls,{passive:true});
 new ResizeObserver(updateReviewControls).observe(quoteRail);
-const captions={
-  'fresas-con-crema-grande':'Fresas con crema, capa por capa.',
-  'minidonas-sweet-10-unidades':'Diez minidonas Sweet para compartir.',
-  'frappe-oreo':'Frappé Oreo, cremoso hasta la última cucharada.'
-};
-const storyButtons=document.querySelectorAll('[data-story]');
-for(const button of storyButtons)button.onclick=()=>{
-  for(const choice of storyButtons)choice.setAttribute('aria-pressed',String(choice===button));
-  const product=find(button.dataset.story);
-  const image=$('story-image');
-  image.src=photo(product);image.alt=product.name;
-  $('story-caption').textContent=captions[product.id];
-  if(!reduced.matches)image.animate([{opacity:.6,transform:'scale(1.025)'},{opacity:1,transform:'scale(1)'}],{duration:280});
-};
 const filmRail=document.querySelector('.film-grid');
 const films=Array.from(filmRail.children);
 const [prevFilm,nextFilm]=document.querySelectorAll('.film-controls button');
@@ -204,6 +223,7 @@ function syncFilm(){
   prevFilm.disabled=index===0;nextFilm.disabled=index===films.length-1;
   document.querySelector('.film-controls output').textContent=(index+1)+' de '+films.length;
 }
+new ResizeObserver(()=>{filmRail.scrollTo({left:filmRail.clientWidth*activeFilm,behavior:'instant'});syncFilm();}).observe(filmRail);
 prevFilm.onclick=()=>goToFilm(activeFilm-1);
 nextFilm.onclick=()=>goToFilm(activeFilm+1);
 filmRail.addEventListener('scroll',syncFilm,{passive:true});
@@ -217,6 +237,7 @@ for(const button of document.querySelectorAll('.film-poster')){
   button.addEventListener('click',()=>{
     const video=document.createElement('video');
     video.controls=true;
+    video.preload='metadata';
     video.playsInline=true;
     video.setAttribute('aria-label',button.closest('article').getAttribute('aria-label'));
     video.poster=button.querySelector('img').src;
