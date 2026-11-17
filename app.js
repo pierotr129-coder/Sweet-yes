@@ -239,7 +239,7 @@ new ResizeObserver(updateReviewControls).observe(quoteRail);
 const filmRail=document.querySelector('.film-grid');
 const films=Array.from(filmRail.children);
 const [prevFilm,nextFilm]=document.querySelectorAll('.film-controls button');
-let activeFilm=0;
+let activeFilm=0,filmVisible=false;
 function goToFilm(index){
   filmRail.scrollTo({left:filmRail.clientWidth*index,behavior:reduced.matches?'instant':'smooth'});
 }
@@ -253,6 +253,7 @@ function syncFilm(){
   });
   prevFilm.disabled=index===0;nextFilm.disabled=index===films.length-1;
   document.querySelector('.film-controls output').textContent=(index+1)+' de '+films.length;
+  playVisibleFilm();
 }
 new ResizeObserver(()=>{filmRail.scrollTo({left:filmRail.clientWidth*activeFilm,behavior:'instant'});syncFilm();}).observe(filmRail);
 prevFilm.onclick=()=>goToFilm(activeFilm-1);
@@ -264,23 +265,29 @@ filmRail.onkeydown=event=>{
     event.preventDefault();goToFilm(Math.max(0,Math.min(films.length-1,activeFilm+(event.key==='ArrowRight'?1:-1))));
   }
 };
-for(const button of document.querySelectorAll('.film-poster')){
-  button.addEventListener('click',()=>{
-    const video=document.createElement('video');
-    video.controls=true;
-    video.preload='metadata';
-    video.playsInline=true;
-    video.setAttribute('aria-label',button.closest('article').getAttribute('aria-label'));
-    video.poster=button.querySelector('img').src;
-    video.src='assets/recorrido/'+button.dataset.film+'-web.mp4';
-    video.addEventListener('play',()=>{
-      document.querySelectorAll('.film-grid video').forEach(other=>{if(other!==video)other.pause();});
-    });
-    button.replaceWith(video);
-    video.focus();
-    video.play().catch(()=>{/* Native play controls remain available. */});
-  });
+function playVisibleFilm(){
+ const film=films[activeFilm];
+ if(!filmVisible||document.hidden){films.forEach(f=>f.querySelector('video')?.pause());return;}
+ let video=film.querySelector('video');
+ if(!video){
+  const poster=film.querySelector('.film-poster');
+  video=document.createElement('video');
+  video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=true;video.preload='metadata';
+  video.setAttribute('muted','');video.setAttribute('playsinline','');
+  video.setAttribute('aria-label',film.getAttribute('aria-label'));
+  video.poster=poster.querySelector('img').src;
+  video.src='assets/recorrido/'+poster.dataset.film+'-web.mp4';
+  const wrap=document.createElement('div');wrap.className='film-player';
+  const sound=document.createElement('button');sound.type='button';sound.className='film-sound';sound.textContent='Activar sonido';sound.setAttribute('aria-label','Activar sonido del video');
+  sound.onclick=()=>{video.muted=!video.muted;video.play().catch(()=>{video.controls=true;});};
+  video.addEventListener('volumechange',()=>{sound.textContent=video.muted?'Activar sonido':'Silenciar';sound.setAttribute('aria-label',video.muted?'Activar sonido del video':'Silenciar video');});
+  video.addEventListener('play',()=>films.forEach(other=>{if(other!==film)other.querySelector('video')?.pause();}));
+  poster.replaceWith(wrap);wrap.append(video,sound);
+ }
+ if(video.paused)video.play().catch(()=>{video.controls=true;});
 }
+new IntersectionObserver(entries=>{filmVisible=entries[0].isIntersecting;playVisibleFilm();},{threshold:.3}).observe(document.querySelector('.film-gallery'));
+document.addEventListener('visibilitychange',playVisibleFilm);
 renderCatalog();resetCup();
 })();
 

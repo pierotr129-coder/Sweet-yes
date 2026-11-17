@@ -257,3 +257,14 @@ nav{gap:28px;font-size:15px}
  .hero .slide-waffle .scene{object-position:center 58%}
 }
 @media(min-width:701px){.hero .slide-waffle .scene{object-position:center 40%}}
+/* Quiet links, consistent social targets and a warm cream ribbon. */
+.flavor-ribbon{background:#eee0c9;color:#654335}
+.social-strip.social-icons a,.social-strip.social-icons a:first-child,.social-strip.social-icons a+a{display:grid;place-items:center;justify-content:center;flex:0 0 44px;width:44px;height:44px;margin:0;padding:10px;border:0;border-radius:50%;background:#efdfcd;gap:0}
+.social-strip.social-icons img{width:24px;height:24px;max-width:none;object-fit:contain}
+.social-strip.social-icons{gap:14px}
+.social-icons a:hover{background:#e9d8be}
+.film-player{position:relative;width:min(100%,285px);margin-inline:auto}
+.film-gallery .film-player video{width:100%}
+.film-sound{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);border:1px solid #ffffff70;border-radius:99px;padding:9px 14px;background:#391613d9;color:#fff8e8;font-size:12px;white-space:nowrap;min-height:40px}
+.film-player:has(video[controls]) .film-sound{bottom:64px}
+@media(max-width:700px){.film-player{width:min(100%,285px)}}
