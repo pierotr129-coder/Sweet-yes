@@ -1,0 +1,48 @@
+/* Portada profesional: velo marrón translúcido sobre la foto y tipografía editorial. */
+.hero{--velo:43 27 19;background:rgb(var(--velo))}
+.hero:before{display:none}
+.hero:after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none}
+
+.hero-copy{color:#fbf3e6}
+.hero-kicker{display:flex;align-items:center;gap:14px;font:500 12px/1 DM,system-ui,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:#e3c9ad;margin-bottom:26px}
+.hero-kicker:before{content:"";flex:none;width:36px;height:1px;background:currentColor;opacity:.8}
+.hero-copy h1{font-family:var(--display);font-weight:380;font-size:clamp(52px,4.9vw,88px);line-height:1.02;letter-spacing:-.025em;color:#fbf3e6;text-shadow:0 2px 24px rgb(var(--velo) / .35)}
+.hero-copy p{font-family:DM,system-ui,sans-serif;font-weight:400;font-size:18px;line-height:1.6;letter-spacing:.005em;color:#fbf3e6d1;max-width:34ch;margin:24px 0 0}
+.hero-copy .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.hero-copy .pill{min-height:48px;padding:12px 26px;border-radius:99px;font:600 14px/1 DM,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;transition:background-color .25s ease,color .25s ease,border-color .25s ease}
+.hero-copy .pill:not(.outline){background:#fbf3e6;color:#2b1b13;border:1px solid #fbf3e6}
+.hero-copy .pill:not(.outline):hover{background:#e9d6bf;border-color:#e9d6bf;color:#2b1b13}
+.hero-copy .pill.outline{background:#fbf3e60f;color:#fbf3e6;border:1px solid #fbf3e680;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.hero-copy .pill.outline:hover{background:#fbf3e621;border-color:#fbf3e6;color:#fbf3e6}
+.hero .scroll-cue{background:transparent;border:1px solid #fbf3e680;color:#fbf3e6}
+
+@media(min-width:701px){
+ .hero picture.hero-slide,.hero picture.slide-moment{left:0;right:0;width:auto;max-width:none;mask-image:none;-webkit-mask-image:none}
+ .hero .is-active .scene{transform:scale(1.04)}
+ .hero .scene{object-position:72% 50%}
+ .hero .slide-moment .scene{object-position:70% 28%}
+ .hero .slide-waffle .scene{object-position:70% 42%}
+ .hero:after{background:
+  linear-gradient(90deg,rgb(var(--velo) / .92) 0%,rgb(var(--velo) / .82) 22%,rgb(var(--velo) / .5) 42%,rgb(var(--velo) / .12) 62%,rgb(var(--velo) / 0) 78%),
+  linear-gradient(0deg,rgb(var(--velo) / .45) 0%,rgb(var(--velo) / 0) 30%)}
+ .hero-copy{width:42%;max-width:600px}
+}
+@media(min-width:701px) and (max-width:1050px){
+ .hero-copy{width:52%}
+ .hero-copy h1{font-size:clamp(44px,5.6vw,58px)}
+ .hero-copy p{font-size:16px}
+ .hero-copy .pill{padding-inline:20px;font-size:13px}
+ .hero:after{background:linear-gradient(90deg,rgb(var(--velo) / .93) 0%,rgb(var(--velo) / .78) 35%,rgb(var(--velo) / .3) 62%,rgb(var(--velo) / 0) 85%)}
+}
+@media(max-width:700px){
+ .hero picture.hero-slide{top:150px;mask-image:linear-gradient(180deg,transparent 0%,#0009 14%,#000 32%);-webkit-mask-image:linear-gradient(180deg,transparent 0%,#0009 14%,#000 32%)}
+ .hero:after{background:
+  linear-gradient(180deg,rgb(var(--velo) / .55) 0%,rgb(var(--velo) / .4) 38%,rgb(var(--velo) / 0) 58%,rgb(var(--velo) / 0) 82%,rgb(var(--velo) / .35) 100%)}
+ .hero-kicker{font-size:10px;letter-spacing:.2em;gap:10px;margin-bottom:16px}
+ .hero-kicker:before{width:24px}
+ .hero-copy h1{font-size:clamp(42px,11.5vw,56px);line-height:1.04}
+ .hero-copy p{font-size:16px;margin-top:16px}
+ .hero-copy .actions{gap:10px;margin-top:24px}
+ .hero-copy .pill{min-height:44px;padding:10px 18px;font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){.hero-copy .pill{transition:none}}
