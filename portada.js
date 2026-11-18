@@ -22,6 +22,8 @@
  const photos=document.querySelectorAll('.handmade>img,.sweet-moments>img,.details-pictures figure,.about-copy,.team-collage,.story-heading,.story-step');
  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('photo-visible');observer.unobserve(entry.target);}}),{threshold:.12});
  photos.forEach(photo=>{photo.classList.add('photo-reveal');observer.observe(photo);});
+ const starsObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('stars-visible');starsObserver.unobserve(entry.target);}}),{threshold:.6});
+ document.querySelectorAll('.review-stars').forEach(stars=>starsObserver.observe(stars));
  // Follow the story's curved route while scrolling, without a continuous JS loop.
  const route=document.querySelector('.story-route'),thread=document.querySelector('.story-thread');
  const path=thread?.querySelector('path'),mascot=document.querySelector('.story-mascot');
