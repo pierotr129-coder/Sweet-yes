@@ -1,0 +1,133 @@
+/* Sweet Yes — photographic cover, playful journey, precise product controls. */
+.hero{background:#352119}
+.hero picture.hero-slide{overflow:hidden;transition:opacity .75s ease}
+.hero .scene{transform:scale(1.025);transition:transform 4.2s ease-out}
+.hero .is-active .scene{transform:scale(1.065)}
+.hero .slide-moment .scene{object-position:65% 24%}
+.hero-copy h1{text-wrap:balance}
+@media(min-width:701px){
+ .hero picture.hero-slide{left:22%;mask-image:linear-gradient(90deg,transparent,#0007 17%,#000 40%);-webkit-mask-image:linear-gradient(90deg,transparent,#0007 17%,#000 40%)}
+ .hero picture.slide-moment{left:auto;right:0;width:64%;max-width:clamp(638px,37.4vw,880px)}
+ .hero .slide-moment .scene{object-position:65% 30%}
+ .hero-copy{width:38%;max-width:580px}
+ .hero:after{background:linear-gradient(90deg,#35211955,transparent 48%)}
+}
+.flavor-ribbon{background:#ece1ce;color:#4b3025;padding:17px 0;font:750 clamp(19px,1.7vw,27px)/1.25 Nunito,DM,sans-serif;letter-spacing:-.045em;border-block:1px solid #56362612}
+.flavor-ribbon>div{animation-duration:34s}
+.flavor-ribbon>div>div{gap:36px;padding-right:36px}
+.flavor-ribbon i{font-size:12px;color:#a57962}
+.ribbon-brand{display:flex;align-items:center;gap:10px;font-weight:850;font-style:italic;letter-spacing:-.065em}
+.ribbon-brand img{border-radius:9px;flex:none;width:34px;height:34px}
+
+/* A composed workspace for choosing a cup. */
+.custom{background:#f3eee3;padding-block:80px}
+.custom:before{opacity:.025}
+.builder-heading{max-width:1260px;margin:auto}
+.builder-heading h2{font:750 clamp(36px,4.5vw,58px)/1.1 Nunito,DM,sans-serif;letter-spacing:-.05em;color:#3c281f}
+.builder-heading>p{margin:12px 0 0;color:#78604f}
+.custom .split{align-items:start;gap:5%;max-width:1260px;margin:36px auto 0;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
+.custom .cup-photo{position:sticky;top:24px;align-self:start;display:flex;flex-direction:column;border:1px solid #67452c14;border-radius:12px;background:radial-gradient(ellipse at 50% 40%,#fffdf7,#e9dfcd);overflow:hidden;max-width:none;padding:28px}
+.preview-label{align-self:flex-start;font:600 10px/1.5 DM,sans-serif;letter-spacing:.15em;color:#725b4c}
+.custom .cup-photo img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:contain;max-height:440px;mix-blend-mode:multiply;margin:8px 0 14px;mask-image:radial-gradient(ellipse at center,#000 53%,transparent 73%);-webkit-mask-image:radial-gradient(ellipse at center,#000 53%,transparent 73%)}
+.preview-caption{display:flex;align-items:start;justify-content:space-between;gap:18px;width:100%;border-top:1px solid #71513b25;padding-top:20px;text-align:left}
+.preview-caption strong{font:750 23px/1.1 Nunito,sans-serif;letter-spacing:-.04em;max-width:120px}
+.preview-caption span{font-size:12px;line-height:1.6;color:#725b4c;max-width:170px}
+#cup-editor{min-width:0}
+.cup-configurator{counter-reset:step 1;background:#fffcf6;border:1px solid #64453020;border-radius:12px;padding:28px;box-shadow:0 14px 40px #39231906}
+.builder-status{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-bottom:1px solid #70543e20;padding-bottom:20px;margin-bottom:24px;font-size:10px;letter-spacing:.1em;color:#78604f}
+.selection-progress{font-variant-numeric:tabular-nums;letter-spacing:0;color:#75483c}
+.size-options legend{font-size:16px;display:flex;align-items:center;gap:10px;margin-bottom:15px}
+.size-options legend>span,.cup-configurator details[data-key]>summary:before{font:600 11px/1 DM,sans-serif;color:#987358;letter-spacing:.04em}
+.size-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.size-grid .choice{margin:0;min-width:0;padding:14px 8px;border:1px solid #dcd2c3;border-radius:6px;text-align:center;display:flex;flex-direction:column;gap:5px;background:#f7f2e9;white-space:normal}
+.size-grid .choice span{font-size:14px;font-weight:650}
+.size-grid .choice small{font-size:11px;opacity:.8}
+.cup-configurator .choice:has(:checked){background:#483025;color:#fff8e8;border-color:#483025}
+.cup-configurator .size-grid .choice:has(:checked){box-shadow:inset 0 -3px #e5a5b9}
+.cup-configurator details{border:0;border-bottom:1px solid #70543e20;padding:4px 0 12px;margin-top:7px}
+.cup-configurator summary{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px 10px;padding:14px 0;font-size:16px;list-style:none}
+.cup-configurator summary::-webkit-details-marker{display:none}
+.cup-configurator details[data-key]>summary:before{counter-increment:step;content:counter(step,decimal-leading-zero);flex:none}
+.cup-configurator summary:after{content:'+';font-size:21px;font-weight:400;margin-left:auto;line-height:1}
+.cup-configurator details[open]>summary:after{content:'−'}
+.cup-configurator summary small{font-size:11px;font-weight:400;color:#846b59;max-width:75%;overflow-wrap:anywhere}
+.cup-configurator .choice{border:1px solid #dfd6c8;border-radius:5px;background:#fffdf8;font-size:13px;padding:9px 12px;margin:3px;white-space:normal;transition:background .15s,border-color .15s}
+.cup-configurator [data-key=fruit]>.choice{border-radius:16px 5px 16px 5px}
+.cup-configurator [data-key=cream]>.choice{border-radius:3px;border-left-width:3px}
+.cup-configurator .choice-none{border:0;border-bottom:1px dashed #9d8170;border-radius:0;background:none;padding:6px 3px;margin-left:8px;font-size:12px}
+.cup-configurator .choice:has(:disabled){opacity:.45;cursor:not-allowed}
+.cup-configurator .choice:focus-within{outline:2px solid #955570;outline-offset:3px}
+.cup-configurator .included-info{font-size:12px;line-height:1.7;color:#78604f;border-left:2px solid #d6bc9a;padding-left:12px;margin:20px 0}
+.cup-configurator .selection-hint{font-size:12px;color:#78604f;line-height:1.65;margin:0 0 10px}
+.cup-configurator .extra-breakdown{font-size:12px;color:#855064;line-height:1.6}
+.cup-configurator .quantity{display:flex;gap:12px;flex-wrap:wrap;padding:20px 0 10px}
+.quantity-label{font-size:12px;margin-right:auto;color:#78604f}
+.cup-configurator .quantity button{border:1px solid #dfd6c8;border-radius:5px;background:#f4eee4;width:34px;height:34px;font-size:20px}
+.cup-configurator .quantity output{font-size:15px;font-weight:650;font-variant-numeric:tabular-nums}
+.cup-configurator .edit-actions{display:grid;grid-template-columns:1fr;gap:9px}
+.cup-configurator .edit-actions .pill{border-radius:6px;min-height:48px;font-size:14px}
+.cup-configurator .edit-actions .outline{background:none;border:0;min-height:36px;font-size:12px;font-weight:500}
+.cup-configurator textarea{width:100%;border:1px solid #d9ccbc;border-radius:5px;background:#fffdf8;padding:10px;resize:vertical}
+.cup-configurator .selection-error{border-left:3px solid var(--rasp);padding-left:10px}
+
+/* Three moments, a winding line and the original retro strawberry. */
+.about.story-journey{overflow:hidden;background:#f0e6d2;padding-block:80px;isolation:isolate}
+.story-journey:before{content:'';position:absolute;inset:0;background:url('assets/marca/patron-portada.svg') repeat;background-size:350px;opacity:.045;z-index:-1;pointer-events:none}
+.story-heading{margin-bottom:40px}
+.story-heading h2{font-weight:750;font-size:clamp(36px,4.8vw,66px)}
+.story-route{max-width:1160px}
+.story-thread{left:44%;width:12%;top:0;height:100%}
+.story-thread path{stroke:#c19f78;stroke-width:2;stroke-dasharray:3 8;stroke-linecap:round}
+.story-step{gap:18%;padding:24px 0 60px;min-height:360px}
+.story-copy{max-width:370px}
+.story-number{display:inline-block;background:#e4d3b8;color:#775439;border-radius:4px;padding:8px 10px;letter-spacing:.08em;margin-bottom:16px}
+.story-copy h3{font-size:clamp(28px,3.2vw,42px);font-weight:750;letter-spacing:-.045em;margin-bottom:16px}
+.story-copy p{line-height:1.75;font-size:15px;max-width:40ch}
+.story-copy blockquote{margin:18px 0;font-size:24px;color:#85455e}
+.story-photo{max-width:440px;margin:0;justify-self:center;border:8px solid #fffaf0;border-radius:22px 22px 70px 22px;background:#fffaf0;box-shadow:0 14px 30px #4c2e2412}
+.story-photo img{aspect-ratio:5/4;border-radius:14px 14px 60px 14px;box-shadow:none}
+.story-photo figcaption{font-size:11px;margin:0;padding:12px 6px 6px;background:none}
+.story-step:nth-of-type(even) .story-photo{border-radius:65px 22px 22px 22px}
+.story-step:nth-of-type(even) .story-photo img{border-radius:55px 14px 14px 14px;object-position:center 42%}
+.story-mascot{position:absolute;width:88px;left:50%;top:0;transform:translate(-50%,-50%);z-index:2;pointer-events:none}
+.story-mascot img{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 5px #5639201a);animation:fresita-step .8s ease-in-out infinite alternate;animation-play-state:paused}
+.in-view .story-mascot img{animation-play-state:running}
+@keyframes fresita-step{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-9px) rotate(5deg)}}
+.story-step.photo-reveal{transform:translate(-26px,24px)}
+.story-step:nth-of-type(even).photo-reveal{transform:translate(26px,24px)}
+.story-step.photo-visible,.story-step:nth-of-type(even).photo-visible{transform:none}
+@media(min-width:701px) and (max-width:1050px){
+ .hero picture.slide-moment{width:70%}
+ .custom .split{grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:24px}
+ .custom .cup-photo{padding:18px}.preview-caption{flex-direction:column}
+ .cup-configurator{padding:20px}.size-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .story-step{gap:15%}.story-mascot{width:65px}
+}
+@media(max-width:700px){
+ .hero{background:#352119}
+ .hero picture.hero-slide{top:170px;mask-image:linear-gradient(180deg,transparent,#0006 18%,#000 38%);-webkit-mask-image:linear-gradient(180deg,transparent,#0006 18%,#000 38%)}
+ .hero picture.slide-moment{top:225px}
+ .hero .slide-moment .scene{object-position:66% 34%}
+ .hero-copy .actions{margin-top:28px}
+ .flavor-ribbon{font-size:19px;padding:14px 0}.flavor-ribbon>div>div{gap:24px;padding-right:24px}.ribbon-brand img{width:29px;height:29px}
+ .custom{padding-block:48px}.custom .split{grid-template-columns:1fr;gap:18px;margin-top:24px}
+ .custom .cup-photo{position:relative;top:auto;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:18px;gap:8px}
+ .preview-label{grid-column:1/-1;font-size:9px}.custom .cup-photo img{max-height:200px;margin:0}
+ .preview-caption{flex-direction:column;border:0;padding:0;gap:10px}.preview-caption strong{font-size:24px;max-width:130px}.preview-caption span{font-size:11px}
+ .cup-configurator{padding:20px 16px}.size-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .size-grid .choice{flex-direction:row;justify-content:space-between;align-items:center;padding:12px}
+ .cup-configurator summary small{max-width:66%;font-size:10px}
+ .about.story-journey{padding:56px 20px}.story-heading{text-align:left;margin-bottom:36px}.story-heading>p{max-width:30ch;font-size:15px}
+ .story-route{padding-left:40px}.story-thread{left:9px;width:12px}.story-mascot{width:47px}
+ .story-step{min-height:0;padding:12px 0 46px;gap:24px;grid-template-columns:minmax(0,1fr)}
+ .story-copy p{font-size:14px;line-height:1.75}.story-copy h3{font-size:30px}
+ .story-photo{width:95%;justify-self:start;transform:rotate(-2deg);border-width:6px}
+ .story-step:nth-of-type(even) .story-photo{justify-self:end;transform:rotate(2deg)}
+ .story-photo figcaption{font-size:10px}.story-photo img{aspect-ratio:5/4}
+}
+@media(prefers-reduced-motion:reduce){
+ .hero .scene,.hero .is-active .scene{transform:none;transition:none}
+ .hero picture.hero-slide{transition:none}
+ .story-mascot img{animation:none}
+ .story-step.photo-reveal,.story-step:nth-of-type(even).photo-reveal{transform:none;opacity:1;transition:none}
+}
