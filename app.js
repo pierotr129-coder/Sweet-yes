@@ -89,8 +89,30 @@ function editor(host,item){
   return `<details data-key="${key}" ${cup&&key==='sauce'?'open':''}><summary>${labels[key]} <small></small></summary><p class="selection-hint">${hint}${cup&&key==='topping'?' Los adicionales cuestan S/ 1 por vaso.':cup&&key==='fruit'?' Solo mango o solo uva añade S/ 3 por vaso. Combinar dos frutas no lleva este recargo.':''}</p>${list.map(v=>`<label class="choice"><input name="${key}" value="${esc(v)}" type="${cup&&key==='sauce'?'radio':'checkbox'}" ${item[key].includes(v)?'checked':''}>${esc(v)}${cup&&key==='sauce'&&v==='Nutella'?' (+S/ 3)':''}</label>`).join('')}${optional?`<label class="choice choice-none"><input type="checkbox" name="omit-${key}" ${item.omitted.includes(key)?'checked':''}>${key==='sauce'?'Sin jalea':'Sin toppings'}</label>`:''}</details>`;
  });
  const firstStep=cup?groups.shift():'';
- host.innerHTML=`<form class="${cup?'cup-configurator':'product-configurator'}">${cup?'<div class="builder-status"><span>PERSONALIZA TU VASO</span><span class="selection-progress" aria-live="polite"></span></div>':''}${sizeRow}${firstStep}<p class="included-info">${cup?`Incluye hasta 2 frutas, 2 cremas y ${requirements.topping} topping${requirements.topping>1?'s':''}. Puedes elegir menos; los adicionales se detallan en cada paso.`:esc(p.description)}</p>${groups.join('')}<details><summary>Observaciones</summary><textarea name="notes" aria-label="Observaciones" maxlength="350" rows="2">${esc(item.notes)}</textarea></details><p class="extra-breakdown" aria-live="polite"></p><div class="quantity"><span class="quantity-label">Cantidad / total</span><button type="button" data-step="-1" aria-label="Quitar una unidad">−</button><output aria-live="polite"></output><button type="button" data-step="1" aria-label="Añadir una unidad">+</button></div><p class="warning" role="alert"></p><div class="edit-actions"><button class="pill" type="submit">${editing>=0&&host===$('detail-editor')?'Guardar cambios':'Agregar al pedido'}</button>${host===$('cup-editor')?'<button class="pill outline" type="submit" value="checkout">Revisar y pedir por WhatsApp</button>':''}</div></form>`;
+ host.innerHTML=`<form class="${cup?'cup-configurator':'product-configurator'}">${cup?'<div class="builder-status"><span>PERSONALIZA TU VASO</span><span class="selection-progress" aria-live="polite"></span></div>':''}${sizeRow}${firstStep}<p class="included-info">${cup?`Incluye hasta 2 frutas, 2 cremas y ${requirements.topping} topping${requirements.topping>1?'s':''}. Puedes elegir menos; los adicionales se detallan en cada paso.`:esc(p.description)}</p>${groups.join('')}<p class="next-step" hidden></p><details data-final><summary>Observaciones</summary><textarea name="notes" aria-label="Observaciones" maxlength="350" rows="2">${esc(item.notes)}</textarea></details><p class="extra-breakdown" aria-live="polite"></p><div class="quantity" data-final><span class="quantity-label">Cantidad / total</span><button type="button" data-step="-1" aria-label="Quitar una unidad">−</button><output aria-live="polite"></output><button type="button" data-step="1" aria-label="Añadir una unidad">+</button></div><p class="warning" role="alert"></p><div class="edit-actions" data-final><button class="pill" type="submit">${editing>=0&&host===$('detail-editor')?'Guardar cambios':'Agregar al pedido'}</button>${host===$('cup-editor')?'<button class="pill outline" type="submit" value="checkout">Revisar y pedir por WhatsApp</button>':''}</div></form>`;
  const form=host.firstElementChild;
+ const progressive=cup&&host===$('cup-editor');
+ if(progressive)form.classList.add('progressive');
+ let revealed=false;
+ function reveal(el){
+  if(!reduced.matches)el.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:420,easing:'cubic-bezier(.2,.7,.2,1)'});
+  setTimeout(()=>{const r=el.getBoundingClientRect();if(r.top>innerHeight-120||r.bottom>innerHeight)el.scrollIntoView({block:'nearest',behavior:reduced.matches?'auto':'smooth'});},280);
+ }
+ function stageProgress(){
+  const steps=[...form.querySelectorAll('details[data-key]')];
+  let gate=steps.findIndex(d=>{const k=d.dataset.key;return !(item[k].length||item.omitted.includes(k));});
+  if(gate<0)gate=steps.length;
+  steps.forEach((d,i)=>{
+   if(i>gate){d.hidden=true;return;}
+   if(d.hidden||!revealed){const wasHidden=d.hidden;d.hidden=false;if(i===gate)d.open=true;if(wasHidden&&revealed)reveal(d);}
+  });
+  const done=gate===steps.length;
+  form.querySelectorAll('[data-final]').forEach(el=>{if(!done){el.hidden=true;return;}if(el.hidden){el.hidden=false;if(revealed)reveal(el);}});
+  const next=form.querySelector('.next-step'),rest=steps.slice(gate+1).map(d=>labels[d.dataset.key]);
+  next.hidden=done;
+  next.innerHTML=done?'':rest.length?`<span>Siguiente</span>${rest.map(esc).join(' · ')}`:'<span>Último paso</span>Luego revisas cantidad y total';
+  revealed=true;
+ }
  if(cup){const notice=document.createElement('p');notice.className='price-notice';notice.setAttribute('role','status');form.querySelector('.builder-status').after(notice);}
  function feedback(message){form.querySelector('.warning').textContent=message;}
  let previousTotal=price(item);
@@ -116,6 +138,7 @@ function editor(host,item){
   form.querySelector('output').textContent=item.qty+' · '+(price(item)===null?'Consultar precio':money(price(item)));
   form.querySelector('[data-step="-1"]').disabled=item.qty===1;
   form.querySelector('[data-step="1"]').disabled=item.qty>=99;
+  if(progressive)stageProgress();
  }
  form.onclick=e=>{if(e.target.dataset.step){item.qty=Math.min(99,Math.max(1,item.qty+Number(e.target.dataset.step)));refresh();}};
  form.onchange=e=>{
@@ -150,6 +173,11 @@ function editor(host,item){
    if(item[field].length){item.omitted=item.omitted.filter(k=>k!==field);const omit=form.querySelector(`[name="omit-${field}"]`);if(omit)omit.checked=false;}
   }
   e.target.closest('[data-key]')?.classList.remove('selection-error');refresh();
+  if(progressive){
+   const key=field.startsWith('omit-')?field.slice(5):field,group=form.querySelector(`details[data-key="${key}"]`);
+   const full=field.startsWith('omit-')?e.target.checked:key==='sauce'?e.target.checked:key!=='topping'&&item[key]?.length>=requirements[key];
+   if(group&&full)setTimeout(()=>{group.open=false;},reduced.matches?0:260);
+  }
  };
  form.oninput=e=>{if(e.target.name==='notes')item.notes=e.target.value;};
  form.onsubmit=e=>{
