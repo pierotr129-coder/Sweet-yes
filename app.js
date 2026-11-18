@@ -79,7 +79,7 @@ function editor(host,item){
  item.omitted ||= [];
  const medium=item.id==='fresas-con-crema-mediano';
  if(medium&&!item.mediumFruitMode)item.mediumFruitMode=item.fruit.length===1&&item.fruit[0]==='Uvas'?'grape':item.fruit.length===1&&item.fruit[0]==='Mango'?'mango':'mix';
- const sizeRow=cup?`<fieldset class="size-options"><legend><span>01</span> Elige tu tamaño</legend><div class="size-grid">${sizes.map(s=>`<label class="choice"><input name="size" type="radio" value="${s.id}" ${item.id===s.id?'checked':''}><span>${esc(s.name.split(' · ')[1])}</span><small>${money(s.price)}</small></label>`).join('')}</div></fieldset>`:'';
+ const sizeRow=cup?`<fieldset class="size-options"><legend><span>01</span> Elige tu tamaño</legend><div class="size-grid">${sizes.map(s=>`<label class="choice"><input name="size" type="radio" value="${s.id}" ${item.id===s.id?'checked':''}><span class="size-name">${esc(s.name.split(' · ')[1])}</span><small>${money(s.price)}</small></label>`).join('')}</div></fieldset>`:'';
  const ordered=Object.entries(requirements).sort(([a],[b])=>cup?(a==='sauce'?-1:b==='sauce'?1:0):0);
  const groups=ordered.filter(([,n])=>n).map(([key,n])=>{
   const list=medium&&key==='fruit'?choices.fruit.filter(v=>v!=='Uvas'):key==='sauce'&&(cup||p.id==='crepa-sweet')?[...choices.sauce,'Nutella']:choices[key];
@@ -91,14 +91,27 @@ function editor(host,item){
  const firstStep=cup?groups.shift():'';
  host.innerHTML=`<form class="${cup?'cup-configurator':'product-configurator'}">${cup?'<div class="builder-status"><span>PERSONALIZA TU VASO</span><span class="selection-progress" aria-live="polite"></span></div>':''}${sizeRow}${firstStep}<p class="included-info">${cup?`Incluye hasta 2 frutas, 2 cremas y ${requirements.topping} topping${requirements.topping>1?'s':''}. Puedes elegir menos; los adicionales se detallan en cada paso.`:esc(p.description)}</p>${groups.join('')}<details><summary>Observaciones</summary><textarea name="notes" aria-label="Observaciones" maxlength="350" rows="2">${esc(item.notes)}</textarea></details><p class="extra-breakdown" aria-live="polite"></p><div class="quantity"><span class="quantity-label">Cantidad / total</span><button type="button" data-step="-1" aria-label="Quitar una unidad">−</button><output aria-live="polite"></output><button type="button" data-step="1" aria-label="Añadir una unidad">+</button></div><p class="warning" role="alert"></p><div class="edit-actions"><button class="pill" type="submit">${editing>=0&&host===$('detail-editor')?'Guardar cambios':'Agregar al pedido'}</button>${host===$('cup-editor')?'<button class="pill outline" type="submit" value="checkout">Revisar y pedir por WhatsApp</button>':''}</div></form>`;
  const form=host.firstElementChild;
+ if(cup){const notice=document.createElement('p');notice.className='price-notice';notice.setAttribute('role','status');form.querySelector('.builder-status').after(notice);}
+ function feedback(message){form.querySelector('.warning').textContent=message;}
+ let previousTotal=price(item);
+
  function refresh(){
   const status=form.querySelector('.selection-progress');
   if(status){const completed=ordered.filter(([key,n])=>n&&(item[key].length||item.omitted.includes(key))).length;status.textContent=completed+' de '+ordered.filter(([,n])=>n).length+' elecciones';form.style.setProperty('--completion',(completed/ordered.filter(([,n])=>n).length*100)+'%');}
   for(const d of form.querySelectorAll('[data-key]')){
    const key=d.dataset.key,n=requirements[key],extra=cup&&key==='topping';
+   d.classList.toggle('step-complete',Boolean(item.omitted.includes(key)||item[key].length));
    d.querySelector('small').textContent=` · ${item.omitted.includes(key)?'Sin '+labels[key].toLowerCase():item[key].length?item[key].join(', '):'Pendiente'}`;
-   for(const input of d.querySelectorAll(`input[name="${key}"]`))input.disabled=!(cup&&key==='sauce')&&!extra&&!input.checked&&item[key].length>=n;
+   for(const input of d.querySelectorAll(`input[name="${key}"]`))input.setAttribute('aria-disabled',String(!(cup&&key==='sauce')&&!extra&&!input.checked&&item[key].length>=n));
   }
+  const notice=form.querySelector('.price-notice'),charges=surcharges(item),total=price(item);
+  if(notice){
+   notice.hidden=!charges.length;
+   const extraTotal=charges.reduce((sum,c)=>sum+c.amount,0)*item.qty;
+   notice.textContent=charges.length?`Tu selección añade ${money(extraTotal)} en adicionales${item.qty>1?' para '+item.qty+' vasos':''}. Total: ${money(total)}. Puedes quitarlos para volver al precio base.`:'';
+  }
+  if(previousTotal!==total&&!reduced.matches)form.querySelector('.quantity').animate([{background:'#e9debc'},{background:'transparent'}],{duration:650});
+  previousTotal=total;
   form.querySelector('.extra-breakdown').textContent=surcharges(item).map(c=>`${c.label}: +${money(c.amount)} por vaso`).join(' · ');
   form.querySelector('output').textContent=item.qty+' · '+(price(item)===null?'Consultar precio':money(price(item)));
   form.querySelector('[data-step="-1"]').disabled=item.qty===1;
@@ -107,6 +120,12 @@ function editor(host,item){
  form.onclick=e=>{if(e.target.dataset.step){item.qty=Math.min(99,Math.max(1,item.qty+Number(e.target.dataset.step)));refresh();}};
  form.onchange=e=>{
   const field=e.target.name;form.querySelector('.warning').textContent='';
+  if(field in labels&&e.target.checked&&!(cup&&field==='sauce')&&!(cup&&field==='topping')){
+   const selected=form.querySelectorAll(`input[name="${field}"]:checked`).length;
+   if(selected>requirements[field]){e.target.checked=false;feedback(`Puedes elegir hasta ${requirements[field]} ${labels[field].toLowerCase()}. Quita una opción antes de añadir otra.`);return;}
+  }
+  if(!reduced.matches&&e.target.closest('.choice'))e.target.closest('.choice').animate([{transform:'scale(.96)'},{transform:'scale(1)'}],{duration:180});
+
   if(field==='size'){
    item.id=e.target.value;delete item.mediumFruitMode;
    const incompatible=item.id==='fresas-con-crema-mediano'&&item.fruit.includes('Uvas')&&item.fruit.length>1;
@@ -141,14 +160,25 @@ function editor(host,item){
    form.querySelector('.warning').textContent='Antes de agregar el producto: '+missing.map(([k])=>(k==='topping'||k==='sauce')?`elige ${labels[k].toLowerCase()} o marca «${k==='sauce'?'Sin jalea':'Sin toppings'}»`:`elige al menos una ${k==='fruit'?'fruta':k==='sauce'?'jalea':'crema'}`).join('; ')+'.';
    form.querySelector(`[data-key="${missing[0][0]}"] summary`).focus();return;
   }
-  if(host===$('detail-editor')&&editing>=0)basket[editing]=structuredClone(item);else basket.push(structuredClone(item));
-  if($('detail').open)$('detail').close();editing=-1;resetCup();review();
+  const wasEditing=host===$('detail-editor')&&editing>=0;
+  if(wasEditing)basket[editing]=structuredClone(item);else basket.push(structuredClone(item));
+  if($('detail').open)$('detail').close();editing=-1;resetCup();review();celebrate(wasEditing?'Cambios guardados.':'¡Agregado a tu pedido!');
  };refresh();
+}
+function celebrate(message){
+ const dialog=$('basket');dialog.querySelectorAll('.order-confirmation,.order-confetti').forEach(el=>el.remove());
+ const confirmation=document.createElement('p');confirmation.className='order-confirmation';confirmation.setAttribute('role','status');confirmation.textContent=message+' Revisa los detalles antes de enviarlo por WhatsApp.';
+ dialog.querySelector('h2').after(confirmation);
+ if(reduced.matches)return;
+ const confetti=document.createElement('div');confetti.className='order-confetti';confetti.setAttribute('aria-hidden','true');
+ for(let i=0;i<28;i++){const piece=document.createElement('i');piece.style.cssText=`--x:${Math.random()*100}%;--drift:${Math.random()*160-80}px;--delay:${Math.random()*.25}s;--spin:${Math.random()*540-270}deg;--color:${['#bd7c91','#d1b977','#765443','#b7c2a0'][i%4]}`;confetti.append(piece);}
+ dialog.append(confetti);setTimeout(()=>confetti.remove(),2000);
 }
 function updateCupPreview(id){
  const image=$('cup-photo');
  image.src='assets/fotos-reales/selector-'+id.replace('fresas-con-crema-','')+'.webp';
  image.alt=find(id).name+' · imagen de referencia';
+ if(!reduced.matches)image.animate([{opacity:.3,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:350});
  image.closest('.cup-photo').querySelector('.preview-label').textContent='TU VASO / '+find(id).name.split(' · ')[1].toUpperCase();
 }
 function resetCup(){const item=fresh('fresas-con-crema-grande');updateCupPreview(item.id);editor($('cup-editor'),item);}
