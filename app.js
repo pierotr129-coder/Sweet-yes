@@ -67,7 +67,9 @@ function extras(item){return find(item.id).category==='fresas'?Math.max(0,item.t
 function surcharges(item){
  if(find(item.id).category!=='fresas')return [];
  const charges=[];
- if(item.fruit.length===1&&['Mango','Uvas'].includes(item.fruit[0]))charges.push({label:item.fruit[0]==='Mango'?'Solo mango':'Solo uva',amount:3});
+ /* Recargo por fruta única: fresa (escasez, desde el 19/11/2026), mango y uva. */
+ const soloFruit={Fresas:'Solo fresa',Mango:'Solo mango',Uvas:'Solo uva'};
+ if(item.fruit.length===1&&soloFruit[item.fruit[0]])charges.push({label:soloFruit[item.fruit[0]],amount:3});
  if(item.sauce.includes('Nutella'))charges.push({label:'Nutella',amount:3});
  if(extras(item))charges.push({label:`${extras(item)} topping(s) extra`,amount:extras(item)});
  return charges;
@@ -112,15 +114,15 @@ function editor(host,item){
  const p=find(item.id),cup=p.category==='fresas',requirements=limits(p);
  item.omitted ||= [];
  const medium=item.id==='fresas-con-crema-mediano';
- if(medium&&!item.mediumFruitMode)item.mediumFruitMode=item.fruit.length===1&&item.fruit[0]==='Uvas'?'grape':item.fruit.length===1&&item.fruit[0]==='Mango'?'mango':'mix';
+ if(medium&&!item.mediumFruitMode)item.mediumFruitMode=item.fruit.length===1&&item.fruit[0]==='Uvas'?'grape':item.fruit.length===1&&item.fruit[0]==='Mango'?'mango':item.fruit.length===1&&item.fruit[0]==='Fresas'?'fresa':'mix';
  const sizeRow=cup?`<fieldset class="size-options"><legend><span>01</span> Elige tu tamaño</legend><div class="size-grid">${sizes.map(s=>`<label class="choice"><input name="size" type="radio" value="${s.id}" ${item.id===s.id?'checked':''}><span class="size-name">${esc(s.name.split(' · ')[1])}</span><small>${money(s.price)}</small></label>`).join('')}</div></fieldset>`:'';
  const ordered=Object.entries(requirements).sort(([a],[b])=>cup?(a==='sauce'?-1:b==='sauce'?1:0):0);
  const groups=ordered.filter(([,n])=>n).map(([key,n])=>{
   const list=medium&&key==='fruit'?choices.fruit.filter(v=>v!=='Uvas'):key==='sauce'&&(cup||p.id==='crepa-sweet')?[...choices.sauce,'Nutella']:choices[key];
-  if(medium&&key==='fruit')return `<details data-key="fruit"><summary>Frutas <small></small></summary><p class="selection-hint">En el mediano puedes combinar fresa, mango y plátano. La uva solo está disponible como fruta única (+S/ 3). Solo mango también añade S/ 3.</p><fieldset><legend>¿Cómo prefieres tus frutas?</legend>${[['mix','Combinar frutas'],['mango','Solo mango (+S/ 3)'],['grape','Solo uva (+S/ 3)']].map(([value,label])=>`<label class="choice"><input type="radio" name="medium-fruit-mode" value="${value}" ${item.mediumFruitMode===value?'checked':''}>${label}</label>`).join('')}</fieldset>${item.mediumFruitMode==='mix'?`<p class="selection-hint">Elige una o dos frutas.</p>${list.map(v=>`<label class="choice"><input name="fruit" type="checkbox" value="${esc(v)}" ${item.fruit.includes(v)?'checked':''}>${esc(v)}</label>`).join('')}`:`<p>${item.mediumFruitMode==='mango'?'Solo mango':'Solo uva'} · adicional S/ 3 por vaso.</p>`}</details>`;
+  if(medium&&key==='fruit')return `<details data-key="fruit"><summary>Frutas <small></small></summary><p class="selection-hint">En el mediano puedes combinar fresa, mango y plátano. Solo fresa, solo mango o solo uva añaden S/ 3 por vaso; la uva solo está disponible como fruta única.</p><fieldset><legend>¿Cómo prefieres tus frutas?</legend>${[['mix','Combinar frutas'],['fresa','Solo fresa (+S/ 3)'],['mango','Solo mango (+S/ 3)'],['grape','Solo uva (+S/ 3)']].map(([value,label])=>`<label class="choice"><input type="radio" name="medium-fruit-mode" value="${value}" ${item.mediumFruitMode===value?'checked':''}>${label}</label>`).join('')}</fieldset>${item.mediumFruitMode==='mix'?`<p class="selection-hint">Elige dos frutas para no pagar recargo; una sola fruta añade S/ 3.</p>${list.map(v=>`<label class="choice"><input name="fruit" type="checkbox" value="${esc(v)}" ${item.fruit.includes(v)?'checked':''}>${esc(v)}</label>`).join('')}`:`<p>${{fresa:'Solo fresa',mango:'Solo mango',grape:'Solo uva'}[item.mediumFruitMode]} · adicional S/ 3 por vaso.</p>`}</details>`;
   const optional=key==='topping'||key==='sauce';
   const hint=cup&&key==='sauce'?'Elige una jalea o marca «Sin jalea». Nutella añade S/ 3 por vaso.':optional?`Elige hasta ${n} o indica que no deseas.`:`Elige entre 1 y ${n}.`;
-  return `<details data-key="${key}" ${cup&&key==='sauce'?'open':''}><summary>${labels[key]} <small></small></summary><p class="selection-hint">${hint}${cup&&key==='topping'?' Los adicionales cuestan S/ 1 por vaso.':cup&&key==='fruit'?' Solo mango o solo uva añade S/ 3 por vaso. Combinar dos frutas no lleva este recargo.':''}</p>${list.map(v=>`<label class="choice"><input name="${key}" value="${esc(v)}" type="${cup&&key==='sauce'?'radio':'checkbox'}" ${item[key].includes(v)?'checked':''}>${esc(v)}${cup&&key==='sauce'&&v==='Nutella'?' (+S/ 3)':''}</label>`).join('')}${optional?`<label class="choice choice-none"><input type="checkbox" name="omit-${key}" ${item.omitted.includes(key)?'checked':''}>${key==='sauce'?'Sin jalea':'Sin toppings'}</label>`:''}</details>`;
+  return `<details data-key="${key}" ${cup&&key==='sauce'?'open':''}><summary>${labels[key]} <small></small></summary><p class="selection-hint">${hint}${cup&&key==='topping'?' Los adicionales cuestan S/ 1 por vaso.':cup&&key==='fruit'?' Solo fresa, solo mango o solo uva añade S/ 3 por vaso. Combinar dos frutas no lleva este recargo.':''}</p>${list.map(v=>`<label class="choice"><input name="${key}" value="${esc(v)}" type="${cup&&key==='sauce'?'radio':'checkbox'}" ${item[key].includes(v)?'checked':''}>${esc(v)}${cup&&key==='sauce'&&v==='Nutella'?' (+S/ 3)':''}</label>`).join('')}${optional?`<label class="choice choice-none"><input type="checkbox" name="omit-${key}" ${item.omitted.includes(key)?'checked':''}>${key==='sauce'?'Sin jalea':'Sin toppings'}</label>`:''}</details>`;
  });
  const firstStep=cup?groups.shift():'';
  host.innerHTML=`<form class="${cup?'cup-configurator':'product-configurator'}">${cup?'<div class="builder-status"><span>PERSONALIZA TU VASO</span><span class="selection-progress" aria-live="polite"></span></div>':''}${sizeRow}${firstStep}<p class="included-info">${cup?`Incluye hasta 2 frutas, 2 cremas y ${requirements.topping} topping${requirements.topping>1?'s':''}. Puedes elegir menos; los adicionales se detallan en cada paso.`:esc(p.description)}</p>${groups.join('')}<details><summary>Observaciones</summary><textarea name="notes" aria-label="Observaciones" maxlength="350" rows="2">${esc(item.notes)}</textarea></details><p class="extra-breakdown" aria-live="polite"></p><div class="quantity"><span class="quantity-label">Cantidad / total</span><button type="button" data-step="-1" aria-label="Quitar una unidad">−</button><output aria-live="polite"></output><button type="button" data-step="1" aria-label="Añadir una unidad">+</button></div><p class="warning" role="alert"></p><div class="edit-actions"><button class="pill" type="submit">${editing>=0&&host===$('detail-editor')?'Guardar cambios':'Agregar al pedido'}</button>${host===$('cup-editor')?'<button class="pill outline" type="submit" value="checkout">Revisar y pedir por WhatsApp</button>':''}</div></form>`;
@@ -171,7 +173,7 @@ function editor(host,item){
   }
   if(field==='medium-fruit-mode'){
    item.mediumFruitMode=e.target.value;
-   item.fruit=e.target.value==='mango'?['Mango']:e.target.value==='grape'?['Uvas']:[];
+   item.fruit=e.target.value==='fresa'?['Fresas']:e.target.value==='mango'?['Mango']:e.target.value==='grape'?['Uvas']:[];
    editor(host,item);host.querySelector('[data-key="fruit"]').open=true;
    host.querySelector(`[name="medium-fruit-mode"][value="${item.mediumFruitMode}"]`).focus();return;
   }
