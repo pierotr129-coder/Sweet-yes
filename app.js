@@ -21,7 +21,19 @@ const realPhotos = {
  'waffle-sweet': 'waffle-oreo',
  'waffle-large': 'preparacion'
 };
-const photo = product => realPhotos[product.id]
+/* Fotos identificadas el 19/11/2026 (output/fotos-identificadas-2026-11-19). Grande conserva su foto anterior. */
+const newPhotos = {
+ 'fresas-con-crema-mediano':'07-fresas-con-crema-mediano',
+ 'fresas-con-crema-maxi':'02-fresas-con-crema-maxi',
+ 'fresas-con-crema-1-litro':'04-fresas-con-crema-1-litro',
+ 'waffle-large':'01-waffle-large',
+ 'minidonas-sweet-10-unidades':'05-minidonas-10-unidades-foto-original',
+ 'frappe-oreo':'08-frappe',
+ 'crepa-clasica':'03-crepa'
+};
+const photo = product => newPhotos[product.id]
+ ? `assets/carta-web/nuevas/${newPhotos[product.id]}.webp`
+ : realPhotos[product.id]
  ? `assets/fotos-reales/${realPhotos[product.id]}-900.webp`
  : `assets/carta-web/${product.id}.webp`;
 const featured=['fresas-con-crema-grande','waffle-sweet','minidonas-clasicas-6-unidades','frappe-oreo','crepa-especial','sandwich-sweet'];

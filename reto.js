@@ -3,7 +3,8 @@
  const root=document.querySelector('#vaso'),game=root.querySelector('#cup-game'),host=root.querySelector('#cup-editor'),scene=root.querySelector('.sweet-runner'),count=root.querySelector('.game-count');
  const bar=document.createElement('div');bar.className='challenge-bar';
  bar.innerHTML='<div class="challenge-line"><strong class="challenge-level"></strong><span class="challenge-time" role="timer"></span></div><div class="challenge-meter"><i></i></div><p class="challenge-help">Elige antes de que se acabe el tiempo y salva a la fresita.</p><div class="challenge-failure" hidden><strong role="alert">¡Oh, no! La fresita tropezó.</strong><p>Se acabó el tiempo. Tu vaso sigue guardado.</p><button type="button" class="challenge-retry">Reintentar este nivel</button></div><button type="button" class="challenge-mode">Jugar sin tiempo</button>';
- host.before(bar);
+ /* Timer and warnings live inside the game card, right under the runner. */
+ scene.querySelector('.runner-footer').after(bar);
  const labels=['Pradera de vainilla','Camino de caramelo','Atardecer de fresa','Bosque de chocolate','Noche de chispitas','¡Llegaste a la meta!'];
  const durations=[30,25,25,22,22,0],keys=['','sauce','fruit','cream','topping'];
  let level=-1,remaining=30,timed=true,lost=false,chosen=false,onscreen=false,last=performance.now(),announced=false;

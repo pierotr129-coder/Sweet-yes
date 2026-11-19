@@ -36,4 +36,12 @@
 .challenge-urgent .challenge-time{color:#a43732}.challenge-urgent .challenge-meter i{background:#a43732}
 .challenge-failure{background:#f8d9e3;border:1px solid #d49caf;border-radius:12px;padding:16px;margin:12px 0;font-size:13px;line-height:1.5}.challenge-retry{border:0;border-radius:8px;background:#532c22;color:#fff4dd;padding:12px 18px;font:700 13px Nunito,sans-serif;cursor:pointer}
 #cup-editor[inert]{opacity:.45}
+/* Challenge inside the game card */
+.sweet-runner:not(.runner-playing) .challenge-bar{display:none}
+.sweet-runner .challenge-bar{position:relative;z-index:2;margin:0;padding:10px 16px 12px;border-block:0;border-top:1px solid #ecd3d0}
+.sweet-runner .challenge-meter{margin:8px 0}
+.sweet-runner .challenge-help{margin:6px 0 2px;font-weight:600}
+.sweet-runner .challenge-urgent .challenge-help,.sweet-runner.runner-lost .challenge-help{color:#a43732}
+.sweet-runner .challenge-failure{margin:8px 0 4px;padding:12px}
+@media(max-width:700px){.sweet-runner .challenge-bar{padding:8px 10px 10px}.sweet-runner .challenge-line{font-size:12px}.sweet-runner .challenge-help,.sweet-runner .challenge-mode{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.runner-world,.challenge-meter i{transition:none}}
