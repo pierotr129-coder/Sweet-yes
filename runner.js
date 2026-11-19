@@ -4,7 +4,7 @@
  const root=document.querySelector('#vaso'),invite=root.querySelector('.game-invite'),game=root.querySelector('#cup-game');
  /* La invitación es solo la pantalla de inicio: el juego aparece al pulsar "Empezar". */
  const startButton=root.querySelector('.game-start');
- invite.querySelector('.invite-stage')?.addEventListener('click',()=>startButton.click());
+ invite.querySelector('.invite-buddy')?.addEventListener('click',()=>startButton.click());
  const art={
   berry:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 9.5c6.2 0 10 3.2 10 8 0 6-6 11.5-10 11.5S6 23.5 6 17.5c0-4.8 3.8-8 10-8Z" fill="#d84a63"/><path d="M16 11c-2.6-4-6.7-4.4-8-2.3 3.1 0 5.3.9 8 2.3 2.7-1.4 4.9-2.3 8-2.3-1.3-2.1-5.4-1.7-8 2.3Z" fill="#6e9a59"/><g fill="#ffe2b4"><circle cx="12" cy="16" r=".9"/><circle cx="19.5" cy="15.5" r=".9"/><circle cx="15.5" cy="20" r=".9"/><circle cx="21" cy="20.5" r=".9"/><circle cx="11" cy="21.5" r=".9"/><circle cx="17" cy="25" r=".9"/></g></svg>',
   heart:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 27.5S4.5 20.6 4.5 12.6A5.8 5.8 0 0 1 16 10a5.8 5.8 0 0 1 11.5 2.6C27.5 20.6 16 27.5 16 27.5Z" fill="#e98fae"/><path d="M9.5 12.5a3 3 0 0 1 3-2.6" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".7"/></svg>',

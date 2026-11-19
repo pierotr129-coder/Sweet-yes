@@ -36,7 +36,7 @@ const photo = product => newPhotos[product.id]
  : realPhotos[product.id]
  ? `assets/fotos-reales/${realPhotos[product.id]}-900.webp`
  : `assets/carta-web/${product.id}.webp`;
-const featured=['fresas-con-crema-grande','waffle-sweet','minidonas-clasicas-6-unidades','frappe-oreo','crepa-especial','sandwich-sweet'];
+const featured=['fresas-con-crema-maxi','fresas-con-crema-grande','waffle-sweet','minidonas-clasicas-6-unidades','frappe-oreo','crepa-especial','sandwich-sweet'];
 const sizes=data.products.filter(p=>p.category==='fresas');
 const rail=$('rail'), reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const basket=[];
@@ -74,18 +74,23 @@ function updateRail(){
  marker.style.transform=`translateX(${100*rail.scrollLeft/Math.max(1,rail.clientWidth)}%)`;
 }
 const animateCards=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){entry.target.classList.add('enter');animateCards.unobserve(entry.target);}},{threshold:.12});
+/* Producto estrella: tarjeta-anuncio dentro de la carta. */
+const STAR='fresas-con-crema-maxi';
+const burstPath=Array.from({length:36},(_,k)=>{const r=k%2?43:49,a=Math.PI*k/18-Math.PI/2;return `${k?'L':'M'}${(50+r*Math.cos(a)).toFixed(2)} ${(50+r*Math.sin(a)).toFixed(2)}`;}).join('')+'Z';
+const starburst=`<svg class="seal-burst" viewBox="0 0 100 100" aria-hidden="true"><path d="${burstPath}" fill="#e98fae"/><circle cx="50" cy="50" r="37" fill="none" stroke="#fff6f2" stroke-width="1.3" stroke-dasharray="2.5 2.5"/></svg>`;
+function starCard(p,i){
+ const top=limits(p).topping;
+ return `<article class="card card-star" style="--delay:${Math.min(i,3)*50}ms"><button data-id="${p.id}" aria-label="${esc(p.name)}, producto estrella y el más pedido, ${money(p.price)}"><span class="star-seal" aria-hidden="true">${starburst}<span class="seal-text"><i>★</i>El más<br>pedido</span></span><span class="star-kicker" aria-hidden="true"><i>✦</i> Producto estrella</span><span class="star-photo"><img loading="lazy" src="${photo(p)}" width="600" height="600" alt=""><i class="twinkle t1">✦</i><i class="twinkle t2">✦</i><i class="twinkle t3">✦</i></span><h3 class="star-name"><small>Fresas con crema</small><b>Maxi</b></h3><span class="star-pitch">El vaso más generoso · ${top} toppings incluidos</span><span class="star-foot"><span class="price">${money(p.price)}</span><span class="star-cta">Lo quiero <i aria-hidden="true">→</i></span></span></button></article>`;
+}
 function renderCatalog(){
  const products=category==='featured'?featured.map(find):category==='all'?data.products:data.products.filter(p=>p.category===category);
  animateCards.disconnect();
- rail.innerHTML=products.map((p,i)=>`<article class="card" style="--delay:${Math.min(i,3)*50}ms"><button data-id="${p.id}"><img loading="lazy" src="${photo(p)}" width="600" height="600" alt=""><h3>${esc(p.name)}</h3><span class="price">${p.price===null?'Consultar precio':money(p.price)}</span><span class="card-action">Ver opciones</span></button></article>`).join('');
+ rail.innerHTML=products.map((p,i)=>p.id===STAR?starCard(p,i):`<article class="card" style="--delay:${Math.min(i,3)*50}ms"><button data-id="${p.id}"><img loading="lazy" src="${photo(p)}" width="600" height="600" alt=""><h3>${esc(p.name)}</h3><span class="price">${p.price===null?'Consultar precio':money(p.price)}</span><span class="card-action">Ver opciones</span></button></article>`).join('');
  rail.scrollLeft=0;rail.querySelectorAll('.card').forEach(c=>animateCards.observe(c));
  $('filters').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.value===category));requestAnimationFrame(updateRail);
 }
 $('filters').innerHTML=Object.entries({featured:'Favoritos',...data.categoryTitles,all:'Toda la carta'}).map(([id,title])=>`<button value="${id}">${esc(title)}</button>`).join('');
 $('filters').onclick=e=>{if(e.target.tagName==='BUTTON'){category=e.target.value;renderCatalog();}};
-/* Producto estrella: Fresas con crema Maxi. */
-{const star=find('fresas-con-crema-maxi'),box=$('star-product');
- if(star&&box){box.querySelector('.star-photo').src=photo(star);box.querySelector('.star-price').textContent=money(star.price);box.querySelector('.star-order').onclick=()=>detail(fresh(star.id));}}
 function slide(dir){rail.scrollBy({left:dir*(rail.firstElementChild.offsetWidth+parseFloat(getComputedStyle(rail).columnGap)),behavior:reduced.matches?'instant':'smooth'});}
 $('prev').onclick=()=>slide(-1);$('next').onclick=()=>slide(1);rail.onscroll=updateRail;window.addEventListener('resize',updateRail);
 rail.onkeydown=e=>{if(['ArrowRight','ArrowLeft'].includes(e.key)){e.preventDefault();slide(e.key==='ArrowRight'?1:-1);}};
