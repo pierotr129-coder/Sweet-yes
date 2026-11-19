@@ -1,0 +1,21 @@
+.game-invite{display:grid;grid-template-columns:1fr 1.1fr;gap:36px;padding:40px;max-width:1240px;background:#f8d5e1}
+.game-invite h3{font-size:clamp(34px,3.6vw,52px)}
+.game-start{animation:play-wiggle 3.5s ease-in-out infinite;background:#e88caf;box-shadow:0 5px 0 #9a4d6d,0 9px 20px #984a7020;font-weight:800}
+.sweet-runner{position:relative;min-width:0;width:100%;overflow:hidden;border-radius:18px;background:#fff4dd;border:1px solid #dbafac;box-shadow:0 8px 0 #63392b12;color:#532c22}
+.runner-hud,.runner-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;position:relative;z-index:2}
+.runner-hud{font-size:9px;font-weight:800;letter-spacing:.1em}.runner-motion{width:30px;height:30px;border:1px solid #d9bca5;border-radius:50%;background:#fff9ed;color:#63392b;cursor:pointer}
+.runner-world{height:230px;position:relative;overflow:hidden;background:linear-gradient(#fff4dd,#f5dfb9)}
+.runner-cloud{position:absolute;width:85px;height:20px;border-radius:40px;background:#fffaf0;top:24px;animation:cloud-drift 16s linear infinite}.runner-cloud:before{content:'';position:absolute;left:25px;bottom:5px;width:35px;height:30px;border-radius:50%;background:inherit}.cloud-two{top:65px;left:70%;animation-delay:-8s}.cloud-one{left:20%}
+.runner-hills{position:absolute;inset:40% -10% 0;background:radial-gradient(ellipse at 25% 100%,#e9b9bc 0 35%,transparent 36%),radial-gradient(ellipse at 80% 100%,#d1ba96 0 40%,transparent 41%);opacity:.6}
+.runner-ground{position:absolute;bottom:0;left:0;right:0;height:29px;border-top:7px solid #66392d;background:repeating-linear-gradient(110deg,#925c44 0 20px,#815039 20px 40px);background-size:88px 100%;animation:ground-run .8s linear infinite}
+.runner-character{position:absolute;left:23%;bottom:21px;width:118px;height:118px;margin-left:-44px;z-index:2;will-change:transform}.runner-character img{width:100%;height:100%;object-fit:contain}
+.runner-shadow{position:absolute;left:23%;margin-left:-27px;bottom:25px;width:80px;height:12px;border-radius:50%;background:#43201c;opacity:.18}
+.runner-obstacle{position:absolute;bottom:28px;left:0;width:38px;height:38px;border-radius:12px;border:3px solid #794d35;background:#c99569;display:flex;align-items:center;justify-content:space-evenly}.runner-obstacle i{width:5px;height:9px;border-radius:2px;background:#593126}
+.runner-spark{position:absolute;bottom:110px;left:0;color:#b36b24;font-size:25px}.runner-message{font-size:12px;line-height:1.4}.runner-jump{flex:none;border:0;border-radius:8px;background:#532c22;color:#fff3df;padding:10px 14px;font:700 12px Nunito,sans-serif;cursor:pointer}
+.runner-playing{margin:16px 0;}.runner-playing .runner-world{height:150px}.runner-playing .runner-character{width:100px;height:100px}.runner-playing .runner-hud{padding-block:6px}.runner-playing .runner-footer{padding-block:8px}
+.runner-reward .runner-spark{color:#b65384;text-shadow:0 0 12px #eeabc6}.runner-reward{border-color:#d47fa1}.runner-paused *{animation-play-state:paused!important}
+@keyframes ground-run{to{background-position:-88px 0}}@keyframes cloud-drift{to{transform:translateX(-180px)}}
+@keyframes play-wiggle{0%,76%,100%{transform:rotate(0) scale(1)}80%,88%{transform:rotate(-2deg) scale(1.025)}84%,92%{transform:rotate(2deg) scale(1.025)}}
+@media(max-width:700px){.game-invite{display:flex;flex-direction:column;align-items:stretch;padding:24px 18px;gap:24px}.game-invite h3{font-size:38px}.runner-world{height:200px}.runner-playing{position:sticky;top:72px;z-index:5}.runner-playing .runner-world{height:95px}.runner-playing .runner-character{width:76px;height:76px;bottom:17px}.runner-playing .runner-ground{height:22px}.runner-playing .runner-footer{padding:6px 10px}.runner-playing .runner-hud{display:none}.runner-playing .runner-message{font-size:10px}.runner-playing .runner-obstacle{width:25px;height:25px;bottom:22px}.runner-playing .runner-spark{bottom:65px}.runner-playing .runner-jump{padding:7px 11px}}
+@media(prefers-reduced-motion:reduce){.game-start,.sweet-runner *{animation:none!important}}
+@media(max-width:700px){.runner-playing .runner-hud{display:flex;position:absolute;right:0;top:0;padding:5px;z-index:3}.runner-playing .runner-hud>span{display:none}.runner-playing .runner-motion{width:26px;height:26px;font-size:10px}}
