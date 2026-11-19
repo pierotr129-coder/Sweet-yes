@@ -29,7 +29,8 @@ const newPhotos = {
  'waffle-large':'01-waffle-large',
  'minidonas-sweet-10-unidades':'05-minidonas-10-unidades-foto-original',
  'frappe-oreo':'08-frappe',
- 'crepa-clasica':'03-crepa'
+ 'crepa-clasica':'03-crepa',
+ 'waffle-sweet':'10-waffle-sweet'
 };
 const photo = product => newPhotos[product.id]
  ? `assets/carta-web/nuevas/${newPhotos[product.id]}.webp`
@@ -85,7 +86,8 @@ function starCard(p,i){
 function renderCatalog(){
  const products=category==='featured'?featured.map(find):category==='all'?data.products:data.products.filter(p=>p.category===category);
  animateCards.disconnect();
- rail.innerHTML=products.map((p,i)=>p.id===STAR?starCard(p,i):`<article class="card" style="--delay:${Math.min(i,3)*50}ms"><button data-id="${p.id}"><img loading="lazy" src="${photo(p)}" width="600" height="600" alt=""><h3>${esc(p.name)}</h3><span class="price">${p.price===null?'Consultar precio':money(p.price)}</span><span class="card-action">Ver opciones</span></button></article>`).join('');
+ /* La tarjeta-anuncio solo en Favoritos (primera impresión); en las demás categorías, un sello pequeño. */
+ rail.innerHTML=products.map((p,i)=>p.id===STAR&&category==='featured'?starCard(p,i):`<article class="card${p.id===STAR?' card-best':''}" style="--delay:${Math.min(i,3)*50}ms"><button data-id="${p.id}">${p.id===STAR?'<span class="mini-seal"><i aria-hidden="true">★</i> El más pedido</span>':''}<img loading="lazy" src="${photo(p)}" width="600" height="600" alt=""><h3>${esc(p.name)}</h3><span class="price">${p.price===null?'Consultar precio':money(p.price)}</span><span class="card-action">Ver opciones</span></button></article>`).join('');
  rail.scrollLeft=0;rail.querySelectorAll('.card').forEach(c=>animateCards.observe(c));
  $('filters').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.value===category));requestAnimationFrame(updateRail);
 }

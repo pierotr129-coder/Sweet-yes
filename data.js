@@ -261,7 +261,7 @@ window.SWEET_YES = {
       "name": "Frappé Oreo",
       "category": "frappes",
       "image": "assets/catalogo/frappes/frappe-oreo-con-logo.png",
-      "price": null,
+      "price": 14,
       "description": "Cremoso, heladito y con ese toque Sweet Yes."
     },
     {
@@ -269,7 +269,7 @@ window.SWEET_YES = {
       "name": "Frappé Moca",
       "category": "frappes",
       "image": "assets/catalogo/frappes/frappe-moca-con-logo.png",
-      "price": null,
+      "price": 14,
       "description": "Cremoso, heladito y con ese toque Sweet Yes."
     },
     {
