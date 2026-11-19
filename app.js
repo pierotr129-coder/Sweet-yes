@@ -24,18 +24,19 @@ const realPhotos = {
 /* Fotos identificadas el 19/11/2026 (output/fotos-identificadas-2026-11-19). Grande conserva su foto anterior. */
 const newPhotos = {
  'fresas-con-crema-mediano':'07-fresas-con-crema-mediano',
+ 'fresas-con-crema-grande':'vaso-grande-fondo-crema-v2',
  'fresas-con-crema-maxi':'02-fresas-con-crema-maxi',
  'fresas-con-crema-1-litro':'04-fresas-con-crema-1-litro',
  'waffle-large':'01-waffle-large',
  'frappe-oreo':'08-frappe',
  'crepa-clasica':'03-crepa',
  /* Lote 2 del 19/11/2026, enviado por el usuario (output/fotos-carta-2026-11-19-lote2). */
- 'waffle-sweet':'10-waffle-sweet-v2',
- 'frappe-moca':'11-frappe-moca',
- 'crepa-especial':'12-crepa-especial',
- 'crepa-sweet':'13-crepa-sweet',
- 'frappe-creme-brulee':'14-frappe-creme-brulee',
- 'frappe-caramel':'15-frappe-caramel',
+ 'waffle-sweet':'10-waffle-sweet-cerca-v3',
+ 'frappe-moca':'frappe-moca-sticker-v2',
+ 'crepa-especial':'crepa-especial-realista-v2',
+ 'crepa-sweet':'crepa-sweet-realista-v2',
+ 'frappe-creme-brulee':'frappe-creme-brulee-sticker-v2',
+ 'frappe-caramel':'frappe-caramel-sticker-v2',
  'minidonas-sweet-10-unidades':'16-minidonas-10-unidades',
  'minidonas-large-12-unidades':'17-minidonas-12-unidades'
 };
