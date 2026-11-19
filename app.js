@@ -188,7 +188,7 @@ function celebrate(message){
 }
 function updateCupPreview(id){
  const image=$('cup-photo');
- image.src='assets/fotos-reales/selector-'+id.replace('fresas-con-crema-','')+'.webp';
+ image.src=photo(find(id)); /* misma foto real que muestra la carta */
  image.alt=find(id).name+' · imagen de referencia';
  if(!reduced.matches)image.animate([{opacity:.3,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:350});
  image.closest('.cup-photo').querySelector('.preview-label').textContent='TU VASO / '+find(id).name.split(' · ')[1].toUpperCase();
