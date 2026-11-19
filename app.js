@@ -29,8 +29,8 @@ const newPhotos = {
  'waffle-large':'01-waffle-large',
  'minidonas-sweet-10-unidades':'05-minidonas-10-unidades-foto-original',
  'frappe-oreo':'08-frappe',
- 'crepa-clasica':'03-crepa',
- 'waffle-sweet':'10-waffle-sweet'
+ 'crepa-clasica':'03-crepa'
+ /* Waffle Sweet: pendiente de una nueva edición sin bordes defectuosos; mientras tanto usa su foto anterior. */
 };
 const photo = product => newPhotos[product.id]
  ? `assets/carta-web/nuevas/${newPhotos[product.id]}.webp`
