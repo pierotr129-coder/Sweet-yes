@@ -12,15 +12,10 @@
   for(const card of rail.children){
    const b=card.getBoundingClientRect();if(!b.width)continue;
    const p=(b.left-start)/b.width;
-   if(p<0){ /* saliendo por la izquierda */
-    const t=Math.min(1,-p*1.3);
-    card.style.opacity=String(1-t);card.style.scale=String(1-t*.25);
-    card.style.translate=`${t*b.width*.55}px ${t*26}px`;card.style.rotate=`${-t*12}deg`;
-   }else{ /* entrando por la derecha: llega pequeña e inclinada y se endereza al quedar al frente */
-    const t=Math.min(1,Math.max(0,(b.right-box.right)/b.width)*1.4);
-    card.style.opacity=String(1-t*.55);card.style.scale=String(1-t*.18);
-    card.style.translate=`0 ${t*22}px`;card.style.rotate=`${t*8}deg`;
-   }
+   /* Todo recto: el producto al frente se ve nítido; los que salen o esperan a los lados quedan transparentes. */
+   const t=p<0?Math.min(1,-p*1.4):Math.min(1,Math.max(0,(b.right-box.right)/b.width)*1.6);
+   card.style.opacity=String(1-t*.62);card.style.scale=String(1-t*.06);
+   card.style.translate='';card.style.rotate='';
   }
  }
  const queue=()=>{if(!frame)frame=requestAnimationFrame(paint);};

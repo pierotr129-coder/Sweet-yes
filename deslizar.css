@@ -18,3 +18,18 @@
 }
 @keyframes swipe-finger{0%,100%{translate:0 0}50%{translate:8px 0}}
 @media(prefers-reduced-motion:reduce){.swipe-finger{animation:none}}
+
+/* Producto estrella: recuadro rosado con crema chorreando (estilo del logo), el sello se mantiene. */
+#rail .card.card-star{background:linear-gradient(180deg,#f7c9d8 0%,#fbe3ea 100%)!important;color:#43201c;border:2.5px solid #43201c!important;border-radius:28px;box-shadow:0 8px 0 #43201c22,0 24px 40px -26px #a4506d!important;overflow:visible}
+#rail .card-star button{padding-top:44px!important;color:#43201c}
+#rail .card-star .star-drip{position:absolute;left:-1px;right:-1px;top:-1px;height:58px;z-index:1;pointer-events:none;overflow:hidden;border-radius:26px 26px 0 0}
+#rail .card-star .star-drip svg{display:block;width:100%;height:100%}
+#rail .card-star .star-kicker{position:relative;z-index:2;color:#a4506d;font:700 10px/1 DM,sans-serif;letter-spacing:.24em;text-transform:uppercase;margin:6px 0 12px}
+#rail .card-star .star-photo{position:relative;z-index:2;background:#fff6ee;border:2px solid #43201c;border-radius:20px;box-shadow:0 5px 0 #43201c1f}
+#rail .card-star .star-name small{color:#a4506d}
+#rail .card-star .star-name b{color:#43201c;font-weight:400}
+#rail .card-star .star-pitch{color:#6b4038}
+#rail .card-star .price{color:#43201c}
+#rail .card-star .star-cta{background:#43201c;color:#fff6f2;box-shadow:0 5px 0 #a4506d}
+#rail .card-star:hover .star-cta{background:#5e2e27}
+#rail .card-star .star-seal{z-index:3}
