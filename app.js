@@ -83,6 +83,9 @@ function renderCatalog(){
 }
 $('filters').innerHTML=Object.entries({featured:'Favoritos',...data.categoryTitles,all:'Toda la carta'}).map(([id,title])=>`<button value="${id}">${esc(title)}</button>`).join('');
 $('filters').onclick=e=>{if(e.target.tagName==='BUTTON'){category=e.target.value;renderCatalog();}};
+/* Producto estrella: Fresas con crema Maxi. */
+{const star=find('fresas-con-crema-maxi'),box=$('star-product');
+ if(star&&box){box.querySelector('.star-photo').src=photo(star);box.querySelector('.star-price').textContent=money(star.price);box.querySelector('.star-order').onclick=()=>detail(fresh(star.id));}}
 function slide(dir){rail.scrollBy({left:dir*(rail.firstElementChild.offsetWidth+parseFloat(getComputedStyle(rail).columnGap)),behavior:reduced.matches?'instant':'smooth'});}
 $('prev').onclick=()=>slide(-1);$('next').onclick=()=>slide(1);rail.onscroll=updateRail;window.addEventListener('resize',updateRail);
 rail.onkeydown=e=>{if(['ArrowRight','ArrowLeft'].includes(e.key)){e.preventDefault();slide(e.key==='ArrowRight'?1:-1);}};
@@ -202,12 +205,24 @@ function review(){
  $('items').innerHTML=basket.map((it,i)=>`<article class="item"><strong>${it.qty} × ${esc(find(it.id).name)}</strong>${describe(it).map(t=>`<p>${esc(t)}</p>`).join('')}<p>${price(it)===null?'Consultar precio':money(price(it))}</p><button data-edit="${i}">Editar</button><button data-remove="${i}">Quitar</button></article>`).join('')+(basket.length?`<p><strong>${total}</strong></p>${partial?'<p>La tienda confirmará los precios pendientes.</p>':''}`:'<p>Elige un producto de la carta para comenzar.</p>');
  const text=['¡Hola, Sweet Yes! Quisiera pedir:',...basket.map(it=>[`${it.qty} × ${find(it.id).name}`, ...describe(it),price(it)===null?'Precio a consultar':money(price(it))].join('\n')),total,partial?'¿Me confirman los precios pendientes?':''].filter(Boolean).join('\n\n');
  $('send').href=`https://wa.me/${data.whatsapp}?text=${encodeURIComponent(text)}`;$('send').hidden=!basket.length;
- $('order-nav').textContent=basket.length?`Mi pedido (${basket.reduce((n,it)=>n+it.qty,0)})`:'Hacer pedido';
+ paintBag();
  if(!$('basket').open)$('basket').showModal();
 }
 $('items').onclick=e=>{const b=e.target;if(b.hasAttribute('data-remove')){basket.splice(Number(b.dataset.remove),1);review();}if(b.hasAttribute('data-edit')){$('basket').close();detail(structuredClone(basket[Number(b.dataset.edit)]),Number(b.dataset.edit));}};
 $('order-nav').onclick=()=>basket.length?review():$('carta').scrollIntoView();
 $('continue').onclick=()=>{$('basket').close();$('carta').scrollIntoView();};
+/* Bolsita del pedido: icono con contador en el encabezado. */
+const bagIcon='<svg class="bag-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 8.5h13l-1.1 11.2a1.5 1.5 0 0 1-1.5 1.3H8.1a1.5 1.5 0 0 1-1.5-1.3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 8.5V7a3 3 0 0 1 6 0v1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+let bagCount=0;
+function paintBag(){
+ const n=basket.reduce((s,it)=>s+it.qty,0),b=$('order-nav');
+ b.classList.add('bag-button');b.classList.toggle('bag-filled',n>0);
+ b.innerHTML=bagIcon+`<span class="bag-label">${n?'Mi bolsita':'Hacer pedido'}</span>`+(n?`<span class="bag-count">${n}</span>`:'');
+ b.setAttribute('aria-label',n?`Mi bolsita: ${n} producto${n>1?'s':''}`:'Hacer pedido');
+ if(n>bagCount&&!reduced.matches){b.classList.remove('bag-bump');void b.offsetWidth;b.classList.add('bag-bump');}
+ bagCount=n;
+}
+paintBag();
 document.querySelectorAll('dialog .close').forEach(b=>b.onclick=()=>b.closest('dialog').close());
 $('detail').onclose=()=>{editing=-1;};
 
