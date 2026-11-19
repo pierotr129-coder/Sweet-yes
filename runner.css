@@ -19,3 +19,21 @@
 @media(max-width:700px){.game-invite{display:flex;flex-direction:column;align-items:stretch;padding:24px 18px;gap:24px}.game-invite h3{font-size:38px}.runner-world{height:200px}.runner-playing{position:sticky;top:72px;z-index:5}.runner-playing .runner-world{height:95px}.runner-playing .runner-character{width:76px;height:76px;bottom:17px}.runner-playing .runner-ground{height:22px}.runner-playing .runner-footer{padding:6px 10px}.runner-playing .runner-hud{display:none}.runner-playing .runner-message{font-size:10px}.runner-playing .runner-obstacle{width:25px;height:25px;bottom:22px}.runner-playing .runner-spark{bottom:65px}.runner-playing .runner-jump{padding:7px 11px}}
 @media(prefers-reduced-motion:reduce){.game-start,.sweet-runner *{animation:none!important}}
 @media(max-width:700px){.runner-playing .runner-hud{display:flex;position:absolute;right:0;top:0;padding:5px;z-index:3}.runner-playing .runner-hud>span{display:none}.runner-playing .runner-motion{width:26px;height:26px;font-size:10px}}
+/* The stage stays in the page flow: it never covers the form while scrolling. */
+.runner-playing{position:relative!important;top:auto!important;z-index:auto!important}
+.runner-world{transition:background 1.2s ease}
+.sweet-runner[data-level="1"] .runner-world{background:linear-gradient(#f6d3a8,#efc89d)}
+.sweet-runner[data-level="2"] .runner-world{background:linear-gradient(#cf9cc6,#f6ba99)}
+.sweet-runner[data-level="3"] .runner-world{background:linear-gradient(#6a526f,#c38b9f)}
+.sweet-runner[data-level="4"] .runner-world,.sweet-runner[data-level="5"] .runner-world{background:radial-gradient(circle at 80% 20%,#fff3ce 0 13px,transparent 14px),radial-gradient(circle at 50% 15%,#fff8e8 0 1px,transparent 2px),radial-gradient(circle at 60% 35%,#fff8e8 0 1px,transparent 2px),linear-gradient(#29233d,#67516c)}
+.sweet-runner[data-level="4"] .runner-cloud,.sweet-runner[data-level="5"] .runner-cloud{opacity:.2}
+.runner-lost *{animation-play-state:paused!important}.runner-lost .runner-character{transform:translateY(9px) rotate(78deg)!important;filter:grayscale(.5)}
+.runner-victory .runner-spark{font-size:40px;color:#d99730}
+.challenge-bar{padding:16px 0;margin-bottom:18px;border-block:1px solid #e5c7cd;color:#61372e}
+.challenge-line{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px}.challenge-time{font-variant-numeric:tabular-nums;font-weight:800;white-space:nowrap;color:#9e456b}
+.challenge-meter{height:5px;background:#ead9d0;border-radius:5px;overflow:hidden;margin:12px 0}.challenge-meter i{display:block;height:100%;background:#cd86a1;transition:width .12s linear}
+.challenge-help{font-size:12px;line-height:1.5;margin:8px 0}.challenge-mode{border:0;background:none;color:#8b5268;text-decoration:underline;font:inherit;font-size:12px;padding:6px 0;cursor:pointer}
+.challenge-urgent .challenge-time{color:#a43732}.challenge-urgent .challenge-meter i{background:#a43732}
+.challenge-failure{background:#f8d9e3;border:1px solid #d49caf;border-radius:12px;padding:16px;margin:12px 0;font-size:13px;line-height:1.5}.challenge-retry{border:0;border-radius:8px;background:#532c22;color:#fff4dd;padding:12px 18px;font:700 13px Nunito,sans-serif;cursor:pointer}
+#cup-editor[inert]{opacity:.45}
+@media(prefers-reduced-motion:reduce){.runner-world,.challenge-meter i{transition:none}}
