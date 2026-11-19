@@ -1,0 +1,17 @@
+/* Carta: efecto al deslizar (mantiene el estilo claro y rosado de la carta). */
+#rail .card{transform-origin:50% 70%;will-change:opacity,scale,translate,rotate}
+#rail.is-dragging{scroll-snap-type:none;cursor:grabbing;-webkit-user-select:none;user-select:none}
+#rail.is-dragging .card{pointer-events:none}
+@media(hover:hover){#rail{cursor:grab}}
+#rail img{-webkit-user-drag:none}
+
+/* Pista para deslizar: solo en pantallas táctiles */
+.swipe-hint{display:none}
+@media(hover:none){
+ #carta .arrows{display:none}
+ .swipe-hint{display:flex;align-items:center;justify-content:center;gap:8px;margin:14px 0 0;font:500 13px/1 DM,sans-serif;color:#a4506d;transition:opacity .5s,translate .5s}
+ .swipe-hint.is-gone{opacity:0;translate:0 -6px;pointer-events:none}
+ .swipe-finger{display:inline-block;font-size:16px;animation:swipe-finger 1.6s ease-in-out infinite}
+}
+@keyframes swipe-finger{0%,100%{translate:0 0}50%{translate:8px 0}}
+@media(prefers-reduced-motion:reduce){.swipe-finger{animation:none}}
