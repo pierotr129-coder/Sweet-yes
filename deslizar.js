@@ -13,18 +13,21 @@
    const b=card.getBoundingClientRect();if(!b.width)continue;
    const p=(b.left-start)/b.width;
    if(p<0){ /* saliendo por la izquierda */
-    const t=Math.min(1,-p);
-    card.style.opacity=String(1-t*.9);card.style.scale=String(1-t*.16);
-    card.style.translate=`${t*b.width*.38}px ${t*14}px`;card.style.rotate=`${-t*6}deg`;
-   }else{ /* entrando por la derecha */
-    const t=Math.min(1,Math.max(0,(b.right-box.right)/b.width));
-    card.style.opacity=String(1-t*.45);card.style.scale=String(1-t*.07);
-    card.style.translate=`0 ${t*8}px`;card.style.rotate=`${t*3}deg`;
+    const t=Math.min(1,-p*1.3);
+    card.style.opacity=String(1-t);card.style.scale=String(1-t*.25);
+    card.style.translate=`${t*b.width*.55}px ${t*26}px`;card.style.rotate=`${-t*12}deg`;
+   }else{ /* entrando por la derecha: llega pequeña e inclinada y se endereza al quedar al frente */
+    const t=Math.min(1,Math.max(0,(b.right-box.right)/b.width)*1.4);
+    card.style.opacity=String(1-t*.55);card.style.scale=String(1-t*.18);
+    card.style.translate=`0 ${t*22}px`;card.style.rotate=`${t*8}deg`;
    }
   }
  }
  const queue=()=>{if(!frame)frame=requestAnimationFrame(paint);};
- rail.addEventListener('scroll',queue,{passive:true});addEventListener('resize',queue);
+ /* El encaje respeta el margen lateral real, para que el primer producto quede alineado al título. */
+ const align=()=>{rail.style.scrollPaddingInline=getComputedStyle(rail).paddingLeft;queue();};
+ align();
+ rail.addEventListener('scroll',queue,{passive:true});addEventListener('resize',align);
  reduced.addEventListener('change',queue);
  new MutationObserver(()=>requestAnimationFrame(paint)).observe(rail,{childList:true});
 

@@ -1,5 +1,8 @@
 /* Carta: efecto al deslizar (mantiene el estilo claro y rosado de la carta). */
-#rail .card{transform-origin:50% 70%;will-change:opacity,scale,translate,rotate}
+#rail .card{transform-origin:50% 75%;will-change:opacity,scale,translate,rotate}
+/* La carta llega hasta el borde de la pantalla (sin corte a la derecha); el primer producto sigue alineado al título. */
+#carta{overflow-x:clip}
+#carta #rail{margin-inline:calc(50% - 50vw);padding-inline:calc(50vw - 50%)!important}
 #rail.is-dragging{scroll-snap-type:none;cursor:grabbing;-webkit-user-select:none;user-select:none}
 #rail.is-dragging .card{pointer-events:none}
 @media(hover:hover){#rail{cursor:grab}}
