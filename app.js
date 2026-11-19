@@ -27,12 +27,23 @@ const newPhotos = {
  'fresas-con-crema-maxi':'02-fresas-con-crema-maxi',
  'fresas-con-crema-1-litro':'04-fresas-con-crema-1-litro',
  'waffle-large':'01-waffle-large',
- 'minidonas-sweet-10-unidades':'05-minidonas-10-unidades-foto-original',
  'frappe-oreo':'08-frappe',
- 'crepa-clasica':'03-crepa'
- /* Waffle Sweet: pendiente de una nueva edición sin bordes defectuosos; mientras tanto usa su foto anterior. */
+ 'crepa-clasica':'03-crepa',
+ /* Lote 2 del 19/11/2026, enviado por el usuario (output/fotos-carta-2026-11-19-lote2). */
+ 'waffle-sweet':'10-waffle-sweet-v2',
+ 'frappe-moca':'11-frappe-moca',
+ 'crepa-especial':'12-crepa-especial',
+ 'crepa-sweet':'13-crepa-sweet',
+ 'frappe-creme-brulee':'14-frappe-creme-brulee',
+ 'frappe-caramel':'15-frappe-caramel',
+ 'minidonas-sweet-10-unidades':'16-minidonas-10-unidades',
+ 'minidonas-large-12-unidades':'17-minidonas-12-unidades'
 };
-const photo = product => newPhotos[product.id]
+/* Las versiones de crepas y frappés de identidad-unificada-v1 fueron reemplazadas por las fotos del lote 2. */
+const unifiedPhotos = new Set();
+const photo = product => unifiedPhotos.has(product.id)
+ ? `assets/carta-web/identidad-unificada-v1/${product.id}.webp`
+ : newPhotos[product.id]
  ? `assets/carta-web/nuevas/${newPhotos[product.id]}.webp`
  : realPhotos[product.id]
  ? `assets/fotos-reales/${realPhotos[product.id]}-900.webp`
